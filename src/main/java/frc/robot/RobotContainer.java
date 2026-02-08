@@ -116,22 +116,46 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-    // Lock to 0° when A button is held
+    // Lock to cardinal 90° angles when pov buttons are held
     controller
-        .a()
+        .povUp()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
                 () -> Rotation2d.kZero));
-
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Reset gyro to 0° when B button is pressed
     controller
-        .b()
+        .povRight()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> Rotation2d.kCW_90deg));
+    controller
+        .povDown()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> Rotation2d.kPi));
+    controller
+        .povLeft()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> Rotation2d.kCCW_90deg));
+
+    // Toggle X pattern when left stick is pressed
+    controller.leftStick().toggleOnTrue(Commands.startEnd(drive::stopWithX, drive::stop, drive));
+
+    // Reset gyro to 0° when right stick is pressed
+    controller
+        .rightStick()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -139,6 +163,16 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
                     drive)
                 .ignoringDisable(true));
+
+    // Toggle slot drive when start is pressed
+    controller
+        .start()
+        .toggleOnTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -controller.getLeftY() * 0.5,
+                () -> -controller.getLeftX() * 0.5,
+                () -> -controller.getRightX() * 0.5)); // TODO: Improve speed adjustment
   }
 
   /**
