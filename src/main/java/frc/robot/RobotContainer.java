@@ -19,10 +19,14 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOCanandGyro;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOSim;
+import frc.robot.subsystems.shooter.ShooterIOSparkFlex;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -39,6 +43,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Shooter shooter;
+
+  @SuppressWarnings("unused")
   private final Vision vision;
 
   // Controller
@@ -54,11 +61,12 @@ public class RobotContainer {
         // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
-                new GyroIOPigeon2(),
+                new GyroIOCanandGyro(),
                 new ModuleIOSpark(0),
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
+        shooter = new Shooter(new ShooterIOSparkFlex(), () -> 0.0);
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -77,6 +85,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
+        shooter = new Shooter(new ShooterIOSim(), () -> 0.0);
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -95,6 +104,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        shooter = new Shooter(new ShooterIO() {}, () -> 0.0);
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
@@ -194,6 +204,15 @@ public class RobotContainer {
                 () -> -controller.getLeftY() * 0.5,
                 () -> -controller.getLeftX() * 0.5,
                 () -> -controller.getRightX() * 0.5)); // TODO: Improve speed adjustment
+
+    // TODO TS: Temporary shooter controls, replace with better systems once implemented
+    controller.povDown().onTrue(shooter.auto());
+    controller.povRight().onTrue(shooter.hub());
+    controller.povLeft().onTrue(shooter.relay());
+    controller.povDown().onTrue(shooter.stop());
+
+    // Eject when back is held, otherwise stop
+    controller.back().onTrue(shooter.eject()).onFalse(shooter.stop());
   }
 
   /**
