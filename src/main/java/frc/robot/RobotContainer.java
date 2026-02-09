@@ -23,6 +23,10 @@ import frc.robot.subsystems.drive.GyroIOCanandGyro;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOSparkFlex;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
@@ -44,6 +48,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Shooter shooter;
+  private final Intake intake;
 
   @SuppressWarnings("unused")
   private final Vision vision;
@@ -67,6 +72,7 @@ public class RobotContainer {
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
         shooter = new Shooter(new ShooterIOSparkFlex(), () -> 0.0);
+        intake = new Intake(new IntakeIOSparkFlex());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -86,6 +92,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         shooter = new Shooter(new ShooterIOSim(), () -> 0.0);
+        intake = new Intake(new IntakeIOSim());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -105,6 +112,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         shooter = new Shooter(new ShooterIO() {}, () -> 0.0);
+        intake = new Intake(new IntakeIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
@@ -195,7 +203,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // Toggle slot drive when start is pressed
+    // Toggle slow drive when start is pressed
     controller
         .start()
         .toggleOnTrue(
@@ -206,13 +214,16 @@ public class RobotContainer {
                 () -> -controller.getRightX() * 0.5)); // TODO: Improve speed adjustment
 
     // TODO TS: Temporary shooter controls, replace with better systems once implemented
-    controller.povDown().onTrue(shooter.auto());
-    controller.povRight().onTrue(shooter.hub());
+    controller.rightBumper().onTrue(Commands.parallel(shooter.hub(), intake.intake()));
+    controller.leftBumper().onTrue(Commands.parallel(shooter.stop(), intake.stop()));
+    controller.povUp().onTrue(shooter.auto());
     controller.povLeft().onTrue(shooter.relay());
-    controller.povDown().onTrue(shooter.stop());
 
-    // Eject when back is held, otherwise stop
-    controller.back().onTrue(shooter.eject()).onFalse(shooter.stop());
+    // Eject all the things while back is held, otherwise stop
+    controller
+        .back()
+        .onTrue(Commands.parallel(shooter.eject(), intake.eject()))
+        .onFalse(Commands.parallel(shooter.stop(), intake.stop()));
   }
 
   /**
