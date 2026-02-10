@@ -31,6 +31,10 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOSparkFlex;
+import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOSim;
+import frc.robot.subsystems.spindexer.SpindexerIOSparkFlex;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -49,6 +53,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Shooter shooter;
   private final Intake intake;
+  private final Spindexer spindexer;
 
   @SuppressWarnings("unused")
   private final Vision vision;
@@ -73,6 +78,7 @@ public class RobotContainer {
                 new ModuleIOSpark(3));
         shooter = new Shooter(new ShooterIOSparkFlex(), () -> 0.0);
         intake = new Intake(new IntakeIOSparkFlex());
+        spindexer = new Spindexer(new SpindexerIOSparkFlex());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -93,6 +99,7 @@ public class RobotContainer {
                 new ModuleIOSim());
         shooter = new Shooter(new ShooterIOSim(), () -> 0.0);
         intake = new Intake(new IntakeIOSim());
+        spindexer = new Spindexer(new SpindexerIOSim());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -113,6 +120,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         shooter = new Shooter(new ShooterIO() {}, () -> 0.0);
         intake = new Intake(new IntakeIO() {});
+        spindexer = new Spindexer(new SpindexerIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
@@ -213,17 +221,21 @@ public class RobotContainer {
                 () -> -controller.getLeftX() * 0.5,
                 () -> -controller.getRightX() * 0.5)); // TODO: Improve speed adjustment
 
-    // TODO TS: Temporary shooter controls, replace with better systems once implemented
-    controller.rightBumper().onTrue(Commands.parallel(shooter.hub(), intake.intake()));
-    controller.leftBumper().onTrue(Commands.parallel(shooter.stop(), intake.stop()));
+    // TODO TS: Temporary controls, replace with better systems once implemented
+    controller
+        .leftBumper()
+        .onTrue(Commands.parallel(shooter.hub(), intake.intake(), spindexer.shoot()));
+    controller
+        .rightBumper()
+        .onTrue(Commands.parallel(shooter.stop(), intake.stop(), spindexer.stop()));
     controller.povUp().onTrue(shooter.auto());
     controller.povLeft().onTrue(shooter.relay());
 
     // Eject all the things while back is held, otherwise stop
     controller
         .back()
-        .onTrue(Commands.parallel(shooter.eject(), intake.eject()))
-        .onFalse(Commands.parallel(shooter.stop(), intake.stop()));
+        .onTrue(Commands.parallel(shooter.eject(), intake.eject(), spindexer.eject()))
+        .onFalse(Commands.parallel(shooter.stop(), intake.stop(), spindexer.stop()));
   }
 
   /**
