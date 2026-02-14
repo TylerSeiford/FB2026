@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -28,4 +31,8 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static final Transform2d shooterOffset =
+      new Transform2d(
+          Units.inchesToMeters(-8.0), Units.inchesToMeters(12.0), Rotation2d.fromDegrees(-90.0));
 }

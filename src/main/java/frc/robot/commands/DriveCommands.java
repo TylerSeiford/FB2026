@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -43,6 +44,11 @@ public class DriveCommands {
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
   private DriveCommands() {}
+
+  private static boolean isFlipped() {
+    return DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == Alliance.Red;
+  }
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
@@ -84,13 +90,10 @@ public class DriveCommands {
                   linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                   linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                   omega * drive.getMaxAngularSpeedRadPerSec());
-          boolean isFlipped =
-              DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   speeds,
-                  isFlipped
+                  isFlipped()
                       ? drive.getRotation().plus(new Rotation2d(Math.PI))
                       : drive.getRotation()));
         },
@@ -135,13 +138,10 @@ public class DriveCommands {
                       linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                       linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                       omega);
-              boolean isFlipped =
-                  DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
               drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
                       speeds,
-                      isFlipped
+                      isFlipped()
                           ? drive.getRotation().plus(new Rotation2d(Math.PI))
                           : drive.getRotation()));
             },
@@ -149,6 +149,29 @@ public class DriveCommands {
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  private static Rotation2d getTargetAngle(
+      Pose2d robotPose, Translation2d target, Transform2d transform) {
+    Logger.recordOutput("DriveCommands/Target", target);
+    Pose2d offsetPose = robotPose.transformBy(transform);
+    return target.minus(offsetPose.getTranslation()).getAngle().minus(transform.getRotation());
+  }
+
+  public static Command joystickDriveAtTarget(
+      Drive drive,
+      Transform2d offset,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      Supplier<Translation2d> redTarget,
+      Supplier<Translation2d> blueTarget) {
+    return joystickDriveAtAngle(
+        drive,
+        xSupplier,
+        ySupplier,
+        () ->
+            getTargetAngle(
+                drive.getPose(), (isFlipped() ? redTarget.get() : blueTarget.get()), offset));
   }
 
   /**

@@ -44,6 +44,7 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.FieldConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -244,6 +245,41 @@ public class RobotContainer {
         .back()
         .onTrue(Commands.parallel(shooter.eject(), intake.eject(), spindexer.eject()))
         .onFalse(Commands.parallel(shooter.stop(), intake.stop(), spindexer.stop()));
+
+    // ***** Prototype final controls *****
+
+    // Shoot while left trigger is held
+    controller
+        .leftTrigger()
+        .onTrue(Commands.sequence(intake.stop(), shooter.hub(), spindexer.shoot(), arm.stow()))
+        .whileTrue(
+            // TODO: Replace with orbit drive
+            DriveCommands.joystickDriveAtTarget(
+                drive,
+                Constants.shooterOffset,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> FieldConstants.Hub.oppTopCenterPoint.toTranslation2d(),
+                () -> FieldConstants.Hub.topCenterPoint.toTranslation2d()))
+        .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
+    // Relay while left bumper is held
+    controller
+        .leftBumper()
+        .onTrue(Commands.sequence(intake.stop(), shooter.relay(), spindexer.shoot(), arm.stow()))
+        .whileTrue(
+            DriveCommands.joystickDriveAtTarget(
+                drive,
+                Constants.shooterOffset,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> FieldConstants.LeftBump.oppFarLeftCorner, // TODO
+                () -> FieldConstants.LeftBump.farLeftCorner)) // TODO
+        .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
+    // Intake while right trigger is held
+    controller
+        .rightTrigger()
+        .onTrue(Commands.sequence(shooter.stop(), spindexer.stop(), arm.intake(), intake.intake()))
+        .onFalse(Commands.sequence(intake.stop(), arm.stow()));
   }
 
   /**
