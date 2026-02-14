@@ -17,6 +17,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOSim;
+import frc.robot.subsystems.arm.ArmIOSparkMax;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOCanandGyro;
@@ -53,6 +57,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Shooter shooter;
   private final Intake intake;
+  private final Arm arm;
   private final Spindexer spindexer;
 
   @SuppressWarnings("unused")
@@ -78,6 +83,7 @@ public class RobotContainer {
                 new ModuleIOSpark(3));
         shooter = new Shooter(new ShooterIOSparkFlex(), () -> 0.0);
         intake = new Intake(new IntakeIOSparkFlex());
+        arm = new Arm(new ArmIOSparkMax());
         spindexer = new Spindexer(new SpindexerIOSparkFlex());
         vision =
             new Vision(
@@ -99,6 +105,7 @@ public class RobotContainer {
                 new ModuleIOSim());
         shooter = new Shooter(new ShooterIOSim(), () -> 0.0);
         intake = new Intake(new IntakeIOSim());
+        arm = new Arm(new ArmIOSim());
         spindexer = new Spindexer(new SpindexerIOSim());
         vision =
             new Vision(
@@ -120,6 +127,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         shooter = new Shooter(new ShooterIO() {}, () -> 0.0);
         intake = new Intake(new IntakeIO() {});
+        arm = new Arm(new ArmIO() {});
         spindexer = new Spindexer(new SpindexerIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
