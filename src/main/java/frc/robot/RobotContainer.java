@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -137,6 +138,26 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
+    NamedCommands.registerCommand("Drop Arm", arm.intake());
+    NamedCommands.registerCommand("Stow Arm", arm.stow());
+    NamedCommands.registerCommand("Start Intake", intake.intake());
+    NamedCommands.registerCommand("Stop Intake", intake.stop());
+    NamedCommands.registerCommand(
+        "Shoot",
+        Commands.sequence(
+            Commands.parallel(
+                shooter.auto(),
+                DriveCommands.autoDriveAtTarget(
+                    drive,
+                    Constants.shooterOffset,
+                    () -> FieldConstants.Hub.oppTopCenterPoint.toTranslation2d(),
+                    () -> FieldConstants.Hub.topCenterPoint.toTranslation2d(),
+                    Rotation2d.fromDegrees(1.0))),
+            spindexer.shoot(),
+            Commands.waitSeconds(2.5),
+            spindexer.stop(),
+            shooter.stop()));
+
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -230,30 +251,29 @@ public class RobotContainer {
                 () -> -controller.getLeftX() * 0.5,
                 () -> -controller.getRightX() * 0.5)); // TODO: Improve speed adjustment
 
-    // TODO TS: Temporary controls, replace with better systems once implemented
-    controller
-        .leftBumper()
-        .onTrue(Commands.parallel(shooter.hub(), intake.intake(), spindexer.shoot()));
-    controller
-        .rightBumper()
-        .onTrue(Commands.parallel(shooter.stop(), intake.stop(), spindexer.stop()));
-    controller.povUp().onTrue(shooter.auto());
-    controller.povLeft().onTrue(shooter.relay());
-
-    // Eject all the things while back is held, otherwise stop
-    controller
-        .back()
-        .onTrue(Commands.parallel(shooter.eject(), intake.eject(), spindexer.eject()))
-        .onFalse(Commands.parallel(shooter.stop(), intake.stop(), spindexer.stop()));
-
-    // ***** Prototype final controls *****
-
     // Shoot while left trigger is held
     controller
         .leftTrigger()
-        .onTrue(Commands.sequence(intake.stop(), shooter.hub(), spindexer.shoot(), arm.stow()))
+        .onTrue(Commands.sequence(shooter.auto(), spindexer.shoot(), arm.stow()))
         .whileTrue(
-            // TODO: Replace with orbit drive
+            DriveCommands.joystickDriveAtTarget(
+                drive,
+                Constants.shooterOffset,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () ->
+                    FieldConstants.Hub.oppTopCenterPoint
+                        .toTranslation2d(), // TODO: Use shot conductor to select target
+                () ->
+                    FieldConstants.Hub.topCenterPoint
+                        .toTranslation2d())) // TODO: Use shot conductor to select target
+        .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
+
+    // Manual shoot while left bumper is held
+    controller
+        .leftBumper()
+        .onTrue(Commands.sequence(shooter.manualHub(), spindexer.shoot(), arm.stow()))
+        .whileTrue(
             DriveCommands.joystickDriveAtTarget(
                 drive,
                 Constants.shooterOffset,
@@ -262,10 +282,11 @@ public class RobotContainer {
                 () -> FieldConstants.Hub.oppTopCenterPoint.toTranslation2d(),
                 () -> FieldConstants.Hub.topCenterPoint.toTranslation2d()))
         .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
-    // Relay while left bumper is held
+
+    // Manual relay while right bumper is held
     controller
-        .leftBumper()
-        .onTrue(Commands.sequence(intake.stop(), shooter.relay(), spindexer.shoot(), arm.stow()))
+        .rightBumper()
+        .onTrue(Commands.sequence(shooter.manualRelay(), spindexer.shoot(), arm.stow()))
         .whileTrue(
             DriveCommands.joystickDriveAtTarget(
                 drive,
@@ -275,11 +296,18 @@ public class RobotContainer {
                 () -> FieldConstants.LeftBump.oppFarLeftCorner, // TODO
                 () -> FieldConstants.LeftBump.farLeftCorner)) // TODO
         .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
+
     // Intake while right trigger is held
     controller
         .rightTrigger()
-        .onTrue(Commands.sequence(shooter.stop(), spindexer.stop(), arm.intake(), intake.intake()))
-        .onFalse(Commands.sequence(intake.stop(), arm.stow()));
+        .onTrue(Commands.sequence(spindexer.stop(), shooter.stop(), arm.intake(), intake.intake()))
+        .onFalse(Commands.sequence(intake.stop()));
+
+    // Eject all the things while y is held, otherwise stop
+    controller
+        .y()
+        .onTrue(Commands.parallel(shooter.eject(), intake.eject(), spindexer.eject()))
+        .onFalse(Commands.parallel(shooter.stop(), intake.stop(), spindexer.stop()));
   }
 
   /**

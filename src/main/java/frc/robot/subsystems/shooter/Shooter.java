@@ -34,17 +34,17 @@ public class Shooter extends SubsystemBase {
 
   private static enum State {
     STOPPED,
-    STATIC_HUB,
-    STATIC_RELAY,
+    MANUAL_HUB,
+    MANUAL_RELAY,
     AUTO_SHOOT,
     EJECT,
     SYSID
   }
 
-  private final LoggedNetworkNumber staticRelayInput =
-      new LoggedNetworkNumber("Shooter/Static Relay Speed", 5000.0);
-  private final LoggedNetworkNumber staticHubInput =
-      new LoggedNetworkNumber("Shooter/Static Hub Speed", 4000.0);
+  private final LoggedNetworkNumber manualRelayInput =
+      new LoggedNetworkNumber("Shooter/Manual Relay Speed", 5000.0);
+  private final LoggedNetworkNumber manualHubInput =
+      new LoggedNetworkNumber("Shooter/Manual Hub Speed", 4000.0);
   private final LoggedNetworkNumber ejectInput =
       new LoggedNetworkNumber("Shooter/Eject Speed", -1000.0);
 
@@ -100,11 +100,11 @@ public class Shooter extends SubsystemBase {
     Logger.processInputs("Shooter", inputs);
 
     switch (state) {
-      case STATIC_RELAY:
-        runVelocity(staticRelayInput.get());
+      case MANUAL_RELAY:
+        runVelocity(manualRelayInput.get());
         break;
-      case STATIC_HUB:
-        runVelocity(staticHubInput.get());
+      case MANUAL_HUB:
+        runVelocity(manualHubInput.get());
         break;
       case EJECT:
         runVelocity(ejectInput.get());
@@ -173,13 +173,13 @@ public class Shooter extends SubsystemBase {
   }
 
   /** Returns a command to run the shooter at hub state. */
-  public Command hub() {
-    return stateCommand(State.STATIC_HUB);
+  public Command manualHub() {
+    return stateCommand(State.MANUAL_HUB);
   }
 
   /** Returns a command to run the shooter at relay state. */
-  public Command relay() {
-    return stateCommand(State.STATIC_RELAY);
+  public Command manualRelay() {
+    return stateCommand(State.MANUAL_RELAY);
   }
 
   /** Returns a command to run the shooter at auto state. */

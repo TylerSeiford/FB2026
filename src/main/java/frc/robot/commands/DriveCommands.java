@@ -174,6 +174,39 @@ public class DriveCommands {
                 drive.getPose(), (isFlipped() ? redTarget.get() : blueTarget.get()), offset));
   }
 
+  public static Command autoDriveAtTarget(
+      Drive drive,
+      Transform2d offset,
+      Supplier<Translation2d> redTarget,
+      Supplier<Translation2d> blueTarget,
+      Rotation2d angleTolerance) {
+
+    // Create PID controller
+    ProfiledPIDController angleController =
+        new ProfiledPIDController(
+            ANGLE_KP,
+            0.0,
+            ANGLE_KD,
+            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+    angleController.setTolerance(angleTolerance.getRadians());
+
+    return Commands.runEnd(
+            () -> {
+              Rotation2d targetAngle =
+                  getTargetAngle(
+                      drive.getPose(), (isFlipped() ? redTarget.get() : blueTarget.get()), offset);
+
+              double omega =
+                  angleController.calculate(
+                      drive.getRotation().getRadians(), targetAngle.getRadians());
+              drive.runVelocity(new ChassisSpeeds(0.0, 0.0, omega));
+            },
+            () -> drive.stop(),
+            drive)
+        .until(() -> angleController.atGoal());
+  }
+
   /**
    * Measures the velocity feedforward constants for the drive motors.
    *
