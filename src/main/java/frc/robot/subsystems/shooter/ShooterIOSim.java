@@ -24,8 +24,7 @@ public class ShooterIOSim implements ShooterIO {
       new FlywheelSim(
           LinearSystemId.createFlywheelSystem(
               DCMotor.getNeoVortex(2), 0.004, Shooter.Constants.GEAR_RATIO),
-          DCMotor.getNeoVortex(2),
-          Shooter.Constants.GEAR_RATIO);
+          DCMotor.getNeoVortex(2));
   private final PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
   private boolean closedLoop = false;

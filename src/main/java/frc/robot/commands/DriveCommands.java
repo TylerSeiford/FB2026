@@ -36,8 +36,8 @@ public class DriveCommands {
   private static final double DEADBAND = 0.1;
   private static final double ANGLE_KP = 5.0;
   private static final double ANGLE_KD = 0.4;
-  private static final double ANGLE_MAX_VELOCITY = 8.0;
-  private static final double ANGLE_MAX_ACCELERATION = 20.0;
+  private static final double ANGLE_MAX_VELOCITY = 12.0; // Rad/Sec
+  private static final double ANGLE_MAX_ACCELERATION = 20.0; // Rad/Sec^2
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
@@ -153,9 +153,10 @@ public class DriveCommands {
 
   private static Rotation2d getTargetAngle(
       Pose2d robotPose, Translation2d target, Transform2d transform) {
-    Logger.recordOutput("DriveCommands/Target", target);
     Pose2d offsetPose = robotPose.transformBy(transform);
-    return target.minus(offsetPose.getTranslation()).getAngle().minus(transform.getRotation());
+    Translation2d delta = target.minus(offsetPose.getTranslation());
+    Rotation2d targetAngle = delta.getAngle().minus(transform.getRotation());
+    return targetAngle;
   }
 
   public static Command joystickDriveAtTarget(

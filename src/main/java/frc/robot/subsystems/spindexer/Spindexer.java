@@ -39,9 +39,9 @@ public class Spindexer extends SubsystemBase {
   }
 
   private final LoggedNetworkNumber shootInput =
-      new LoggedNetworkNumber("Spindexer/Shoot Speed", 1000.0);
+      new LoggedNetworkNumber("Spindexer/Shoot Speed", 100.0);
   private final LoggedNetworkNumber ejectInput =
-      new LoggedNetworkNumber("Spindexer/Eject Speed", -500.0);
+      new LoggedNetworkNumber("Spindexer/Eject Speed", -50.0);
 
   private final SpindexerIO io;
   private final SpindexerIOInputsAutoLogged inputs = new SpindexerIOInputsAutoLogged();
@@ -68,8 +68,8 @@ public class Spindexer extends SubsystemBase {
         io.configurePID(0.0001, 0.0, 0.0); // TODO TS: SysId
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.03);
-        io.configurePID(0.5, 0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.18);
+        io.configurePID(0.1, 0.0, 0.0);
         break;
       default:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
@@ -148,6 +148,7 @@ public class Spindexer extends SubsystemBase {
   /** Stops the intake. */
   private void stopIntake() {
     state = State.STOPPED;
+    setpoint = 0.0;
     io.stop();
   }
 

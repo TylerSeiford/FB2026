@@ -24,8 +24,7 @@ public class IntakeIOSim implements IntakeIO {
       new FlywheelSim(
           LinearSystemId.createFlywheelSystem(
               DCMotor.getNeoVortex(1), 0.004, Intake.Constants.GEAR_RATIO),
-          DCMotor.getNeoVortex(1),
-          Intake.Constants.GEAR_RATIO);
+          DCMotor.getNeoVortex(1));
   private final PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
   private boolean closedLoop = false;

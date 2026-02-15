@@ -301,7 +301,7 @@ public class RobotContainer {
     controller
         .rightTrigger()
         .onTrue(Commands.sequence(spindexer.stop(), shooter.stop(), arm.intake(), intake.intake()))
-        .onFalse(Commands.sequence(intake.stop()));
+        .onFalse(intake.stop());
 
     // Eject all the things while y is held, otherwise stop
     controller

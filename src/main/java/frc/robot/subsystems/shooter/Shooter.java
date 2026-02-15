@@ -75,7 +75,7 @@ public class Shooter extends SubsystemBase {
         io.configurePID(0.0001, 0.0, 0.0); // TODO TS: SysId
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.03);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.016);
         io.configurePID(0.5, 0.0, 0.0);
         break;
       default:
@@ -161,6 +161,7 @@ public class Shooter extends SubsystemBase {
   /** Stops the shooter. */
   private void stopShooter() {
     state = State.STOPPED;
+    setpoint = 0.0;
     io.stop();
   }
 
