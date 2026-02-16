@@ -10,17 +10,16 @@
           "width": 300,
           "expanded": [
             "/AdvantageKit",
-            "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/RealOutputs/Vision/Camera0",
-            "/AdvantageKit/RealOutputs/Vision/Camera1",
             "/AdvantageKit/RealOutputs/DriveCommands/joystickDriveAtAngle",
             "/AdvantageKit/RealOutputs/DriveCommands/joystickDriveAtAngle/Setpoint",
             "/AdvantageKit/RealOutputs/DriveCommands/joystickDriveAtAngle/Goal",
-            "/AdvantageKit/RealOutputs/Vision"
+            "/AdvantageKit/RealOutputs/Odometry/Robot",
+            "/AdvantageKit/RealOutputs/Vision/Summary",
+            "/AdvantageKit/RealOutputs/Drive"
           ]
         },
         "tabs": {
-          "selected": 2,
+          "selected": 1,
           "tabs": [
             {
               "type": 0,
@@ -96,6 +95,25 @@
                     "visible": true,
                     "options": {
                       "position": "center"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/PathPlanner/activePath",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/PathPlanner/targetPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff"
                     }
                   }
                 ],
@@ -194,6 +212,48 @@
                 ]
               },
               "controlsHeight": 419
+            },
+            {
+              "type": 9,
+              "title": "Swerve",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "rotation",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Robot/rotation",
+                    "logType": "Rotation2d",
+                    "visible": true,
+                    "options": {}
+                  },
+                  {
+                    "type": "states",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveStates/Measured",
+                    "logType": "SwerveModuleState[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000",
+                      "arrangement": "0,1,2,3"
+                    }
+                  },
+                  {
+                    "type": "states",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/SwerveStates/SetpointsOptimized",
+                    "logType": "SwerveModuleState[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff",
+                      "arrangement": "0,1,2,3"
+                    }
+                  }
+                ],
+                "maxSpeed": 5.83,
+                "sizeX": 0.71,
+                "sizeY": 0.66,
+                "orientation": 1
+              },
+              "controllerUUID": "7wb0s0ieeaxe4qlypte74wtgy0npk7ez",
+              "renderer": null,
+              "controlsHeight": 200
             },
             {
               "type": 1,

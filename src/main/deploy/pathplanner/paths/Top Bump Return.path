@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.4,
+        "y": 5.0
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.009109929126712,
+        "y": 5.730509869200632
+      },
+      "isLocked": true,
+      "linkedName": "Top Intake End"
+    },
+    {
+      "anchor": {
+        "x": 3.5,
+        "y": 5.5
+      },
+      "prevControl": {
+        "x": 3.741481456572267,
+        "y": 5.56470476127563
+      },
+      "nextControl": null,
+      "isLocked": true,
+      "linkedName": "Top Bump Return"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.4983164983164984,
+      "rotationDegrees": 29.999999999999996
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Bump",
+      "minWaypointRelativePos": 0.5529556650246332,
+      "maxWaypointRelativePos": 0.8004926108374426,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 6.2,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 1400.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.83,
+    "maxAcceleration": 6.2,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 1400.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 45.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -119.99999999999999
+  },
+  "useDefaultConstraints": true
+}

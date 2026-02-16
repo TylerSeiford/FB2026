@@ -135,9 +135,6 @@ public class RobotContainer {
         break;
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
     NamedCommands.registerCommand("Drop Arm", arm.intake());
     NamedCommands.registerCommand("Stow Arm", arm.stow());
     NamedCommands.registerCommand("Start Intake", intake.intake());
@@ -157,6 +154,9 @@ public class RobotContainer {
             Commands.waitSeconds(2.5),
             spindexer.stop(),
             shooter.stop()));
+
+    // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
     autoChooser.addOption(
