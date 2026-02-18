@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 0.67,
-        "y": 7.0
+        "y": 5.05
       },
       "prevControl": null,
       "nextControl": {
         "x": 0.67,
-        "y": 6.5
+        "y": 5.55
       },
       "isLocked": true,
       "linkedName": "Depot Start"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 0.67,
-        "y": 5.046033925686592
+        "y": 7.0
       },
       "prevControl": {
         "x": 0.67,
-        "y": 5.546033925686592
+        "y": 6.5
       },
       "nextControl": null,
       "isLocked": true,
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5993265993265989,
-      "rotationDegrees": -135.0
+      "rotationDegrees": 135.0
     }
   ],
   "constraintZones": [
@@ -61,13 +61,13 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 75.0
+    "rotation": 45.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -135.0
+    "rotation": 135.0
   },
   "useDefaultConstraints": true
 }

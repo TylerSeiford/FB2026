@@ -8,47 +8,49 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.7868919330322437,
-        "y": 5.691195120280655
+        "x": 6.799874881409592,
+        "y": 5.928913690254726
       },
       "isLocked": true,
       "linkedName": "Top Intake End"
     },
     {
       "anchor": {
-        "x": 3.5,
-        "y": 5.5
+        "x": 5.3,
+        "y": 7.3
       },
       "prevControl": {
-        "x": 3.7232875044966223,
-        "y": 5.387560281325188
+        "x": 6.235318223661732,
+        "y": 6.923754838606528
+      },
+      "nextControl": {
+        "x": 4.638840571215417,
+        "y": 7.565960856633365
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.2,
+        "y": 7.3
+      },
+      "prevControl": {
+        "x": 3.8776732521726,
+        "y": 7.4509492682107386
       },
       "nextControl": null,
       "isLocked": true,
-      "linkedName": "Top Bump Return"
+      "linkedName": "Top Trench Return"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.4983164983164984,
-      "rotationDegrees": 29.999999999999996
+      "waypointRelativePos": 1.3492333901192526,
+      "rotationDegrees": 0.0
     }
   ],
-  "constraintZones": [
-    {
-      "name": "Bump",
-      "minWaypointRelativePos": 0.2539370078740163,
-      "maxWaypointRelativePos": 0.5511811023622052,
-      "constraints": {
-        "maxVelocity": 2.0,
-        "maxAcceleration": 6.2,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 1400.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -61,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 45.0
+    "rotation": 29.999999999999996
   },
   "reversed": false,
   "folder": null,
