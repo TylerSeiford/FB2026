@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 7.4,
-        "y": 5.0
+        "y": 4.75
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.7868919330322437,
-        "y": 5.691195120280655
+        "y": 5.441195120280655
       },
       "isLocked": true,
       "linkedName": "Top Intake End"
@@ -20,8 +20,8 @@
         "y": 5.5
       },
       "prevControl": {
-        "x": 3.7232875044966223,
-        "y": 5.387560281325188
+        "x": 3.75,
+        "y": 5.5
       },
       "nextControl": null,
       "isLocked": true,
@@ -53,9 +53,9 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.83,
-    "maxAcceleration": 6.2,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 1400.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 1440.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

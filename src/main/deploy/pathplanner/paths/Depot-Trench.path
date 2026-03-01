@@ -55,28 +55,28 @@
   "eventMarkers": [
     {
       "name": "Drop Arm",
-      "waypointRelativePos": 0.9014778325123141,
+      "waypointRelativePos": 0.10098522167486906,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "Start Intake",
-      "waypointRelativePos": 0.9014778325123152,
+      "waypointRelativePos": 1.8029556650246321,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
     "maxVelocity": 5.83,
-    "maxAcceleration": 6.2,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 1400.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 1440.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": -29.999999999999996
   },
   "reversed": false,
   "folder": null,

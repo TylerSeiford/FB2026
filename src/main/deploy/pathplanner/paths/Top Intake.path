@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.6,
-        "y": 5.9339745962155614
+        "x": 7.966025403784438,
+        "y": 6.3
       },
       "isLocked": true,
       "linkedName": "Top Intake Start"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 7.4,
-        "y": 5.0
+        "y": 4.75
       },
       "prevControl": {
-        "x": 7.4,
-        "y": 5.715209200627609
+        "x": 7.753553390593274,
+        "y": 5.103553390593274
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,9 +34,9 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.83,
-    "maxAcceleration": 6.2,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 1400.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 1440.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": -29.999999999999996
   },
   "useDefaultConstraints": true
 }

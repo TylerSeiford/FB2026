@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 7.4,
-        "y": 5.0
+        "y": 4.75
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.799874881409592,
-        "y": 5.928913690254726
+        "x": 6.9,
+        "y": 5.616025403784439
       },
       "isLocked": true,
       "linkedName": "Top Intake End"
@@ -20,12 +20,12 @@
         "y": 7.3
       },
       "prevControl": {
-        "x": 6.235318223661732,
-        "y": 6.923754838606528
+        "x": 6.166025403784439,
+        "y": 6.8
       },
       "nextControl": {
-        "x": 4.638840571215417,
-        "y": 7.565960856633365
+        "x": 4.650480947161671,
+        "y": 7.675
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 7.3
       },
       "prevControl": {
-        "x": 3.8776732521726,
-        "y": 7.4509492682107386
+        "x": 3.9244443697168014,
+        "y": 7.494114283826891
       },
       "nextControl": null,
       "isLocked": true,
@@ -55,9 +55,9 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.83,
-    "maxAcceleration": 6.2,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 1400.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 1440.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
