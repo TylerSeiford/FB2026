@@ -9,24 +9,92 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
+import java.util.Optional;
 
 public class VisionConstants {
+  public static class CameraConfig {
+    public static class SimCameraProperties {
+      public final int pixelWidth;
+      public final int pixelHeight;
+      public final Rotation2d fov;
+
+      public SimCameraProperties(int pixelWidth, int pixelHeight, Rotation2d fov) {
+        this.pixelWidth = pixelWidth;
+        this.pixelHeight = pixelHeight;
+        this.fov = fov;
+      }
+    }
+
+    public final String name;
+    public final Transform3d robotToCamera;
+    public final Optional<SimCameraProperties> simCameraProperties;
+
+    public CameraConfig(String name, Transform3d robotToCamera) {
+      this.name = name;
+      this.robotToCamera = robotToCamera;
+      this.simCameraProperties = Optional.empty();
+    }
+
+    public CameraConfig(
+        String name, Transform3d robotToCamera, SimCameraProperties simCameraProperties) {
+      this.name = name;
+      this.robotToCamera = robotToCamera;
+      this.simCameraProperties = Optional.of(simCameraProperties);
+    }
+  }
+
   // AprilTag layout
   public static AprilTagFieldLayout aprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
-  // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "VisionCam1";
-  public static String camera1Name = "VisionCam2";
-
-  // Robot to camera transforms
-  // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 =
-      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
-  public static Transform3d robotToCamera1 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+  public static CameraConfig[] cameraConfigs = {
+    new CameraConfig(
+        "Camera0",
+        new Transform3d(
+            Units.inchesToMeters(8.5),
+            Units.inchesToMeters(13.6275),
+            Units.inchesToMeters(13.5625),
+            new Rotation3d(
+                Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(90))),
+        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(100))),
+    new CameraConfig(
+        "Camera1",
+        new Transform3d(
+            Units.inchesToMeters(-11.25),
+            Units.inchesToMeters(12.9375),
+            Units.inchesToMeters(16.625),
+            new Rotation3d(
+                Units.degreesToRadians(0),
+                Units.degreesToRadians(-45),
+                Units.degreesToRadians(135))),
+        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(70))),
+    new CameraConfig(
+        "Camera2",
+        new Transform3d(
+            Units.inchesToMeters(11),
+            Units.inchesToMeters(-12.375),
+            Units.inchesToMeters(14.375),
+            new Rotation3d(
+                Units.degreesToRadians(0),
+                Units.degreesToRadians(-15),
+                Units.degreesToRadians(345))),
+        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(90))),
+    new CameraConfig(
+        "Camera3",
+        new Transform3d(
+            Units.inchesToMeters(-11.5),
+            Units.inchesToMeters(-12.75),
+            Units.inchesToMeters(16.625),
+            new Rotation3d(
+                Units.degreesToRadians(0),
+                Units.degreesToRadians(-45),
+                Units.degreesToRadians(225))),
+        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(80)))
+  };
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;

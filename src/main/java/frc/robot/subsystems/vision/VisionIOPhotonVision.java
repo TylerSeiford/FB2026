@@ -26,12 +26,11 @@ public class VisionIOPhotonVision implements VisionIO {
   /**
    * Creates a new VisionIOPhotonVision.
    *
-   * @param name The configured name of the camera.
-   * @param robotToCamera The 3D position of the camera relative to the robot.
+   * @param config The configuration of the camera.
    */
-  public VisionIOPhotonVision(String name, Transform3d robotToCamera) {
-    camera = new PhotonCamera(name);
-    this.robotToCamera = robotToCamera;
+  public VisionIOPhotonVision(VisionConstants.CameraConfig config) {
+    camera = new PhotonCamera(config.name);
+    this.robotToCamera = config.robotToCamera;
   }
 
   @Override
