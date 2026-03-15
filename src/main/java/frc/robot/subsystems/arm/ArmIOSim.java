@@ -10,14 +10,14 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 public class ArmIOSim implements ArmIO {
   private final SingleJointedArmSim sim =
       new SingleJointedArmSim(
-          DCMotor.getNEO(2),
+          DCMotor.getNEO(1),
           Arm.Constants.GEAR_RATIO,
           Units.lbsToKilograms(18.0) * Math.pow(Units.inchesToMeters(18.0), 2),
           Units.inchesToMeters(37.0),
           Arm.Constants.MINIMUM.getRadians(),
           Arm.Constants.MAXIMUM.getRadians(),
           true,
-          Rotation2d.fromDegrees(80.0).getRadians());
+          Rotation2d.fromDegrees(110.0).getRadians());
   private final PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
   private boolean closedLoop = false;

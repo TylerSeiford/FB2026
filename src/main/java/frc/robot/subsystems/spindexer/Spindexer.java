@@ -28,7 +28,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class Spindexer extends SubsystemBase {
   public static final class Constants {
-    public static final double GEAR_RATIO = 9.0;
+    public static final double GEAR_RATIO = 45.0;
   }
 
   private static enum State {
@@ -39,9 +39,9 @@ public class Spindexer extends SubsystemBase {
   }
 
   private final LoggedNetworkNumber shootInput =
-      new LoggedNetworkNumber("Spindexer/Shoot Speed", 100.0);
+      new LoggedNetworkNumber("Spindexer/Shoot Speed", 120.0);
   private final LoggedNetworkNumber ejectInput =
-      new LoggedNetworkNumber("Spindexer/Eject Speed", -50.0);
+      new LoggedNetworkNumber("Spindexer/Eject Speed", -60.0);
 
   private final SpindexerIO io;
   private final SpindexerIOInputsAutoLogged inputs = new SpindexerIOInputsAutoLogged();
@@ -64,8 +64,8 @@ public class Spindexer extends SubsystemBase {
     switch (frc.robot.Constants.currentMode) {
       case REAL:
       case REPLAY:
-        ffModel = new SimpleMotorFeedforward(0.1, 0.00185); // TODO TS: SysId
-        io.configurePID(0.0001, 0.0, 0.0); // TODO TS: SysId
+        ffModel = new SimpleMotorFeedforward(0.1, 0.0022); // TODO TS: SysId
+        io.configurePID(0.000175, 0.0, 0.0); // TODO TS: SysId
         break;
       case SIM:
         ffModel = new SimpleMotorFeedforward(0.0, 0.18);
@@ -124,7 +124,7 @@ public class Spindexer extends SubsystemBase {
 
   @AutoLogOutput(key = "Spindexer/AtSpeed")
   private boolean atSpeed() {
-    return Math.abs(getError()) < 100.0;
+    return Math.abs(getError()) < 2.0;
   }
 
   @AutoLogOutput(key = "Spindexer/OnTarget")
@@ -156,7 +156,7 @@ public class Spindexer extends SubsystemBase {
   private Command stateCommand(State state) {
     return Commands.sequence(
         runOnce(() -> this.state = state),
-        Commands.waitSeconds(0.25),
+        Commands.waitSeconds(0.1),
         run(() -> {}).until(this::onTarget));
   }
 

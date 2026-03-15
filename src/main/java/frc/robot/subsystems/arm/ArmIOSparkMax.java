@@ -3,6 +3,7 @@ package frc.robot.subsystems.arm;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -15,7 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.SparkUtil;
 
 public class ArmIOSparkMax implements ArmIO {
-  private final SparkMax motor = new SparkMax(13, MotorType.kBrushless); // TODO TS: CAN ID
+  private final SparkMax motor = new SparkMax(10, MotorType.kBrushless);
   private final SparkAbsoluteEncoder encoder = motor.getAbsoluteEncoder();
   private final SparkClosedLoopController pid = motor.getClosedLoopController();
   private final SparkMaxConfig config = new SparkMaxConfig();
@@ -23,10 +24,16 @@ public class ArmIOSparkMax implements ArmIO {
   public ArmIOSparkMax() {
     config
         .idleMode(IdleMode.kBrake)
-        .inverted(false)
+        .inverted(true)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(50, 30)
-        .secondaryCurrentLimit(60.0);
+        .smartCurrentLimit(5, 5)
+        .secondaryCurrentLimit(15.0);
+    config.absoluteEncoder.inverted(false).positionConversionFactor(360.0);
+    config
+        .closedLoop
+        .positionWrappingEnabled(true)
+        .positionWrappingInputRange(0, 360)
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
     SparkUtil.tryUntilOk(
         motor,
         5,
@@ -37,7 +44,7 @@ public class ArmIOSparkMax implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
-    inputs.position = Rotation2d.fromRotations(encoder.getPosition());
+    inputs.position = Rotation2d.fromDegrees(encoder.getPosition());
     inputs.appliedVolts = new double[] {motor.getAppliedOutput() * motor.getBusVoltage()};
     inputs.currentAmps = new double[] {motor.getOutputCurrent()};
   }

@@ -20,25 +20,25 @@ import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
-import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.SparkUtil;
 
-public class SpindexerIOSparkFlex implements SpindexerIO {
-  private final SparkFlex motor = new SparkFlex(1, MotorType.kBrushless); // TODO TS: CAN ID
+public class SpindexerIOSparkMax implements SpindexerIO {
+  private final SparkMax motor = new SparkMax(13, MotorType.kBrushless);
   private final RelativeEncoder encoder = motor.getEncoder();
   private final SparkClosedLoopController pid = motor.getClosedLoopController();
   private final SparkMaxConfig config = new SparkMaxConfig();
 
-  public SpindexerIOSparkFlex() {
+  public SpindexerIOSparkMax() {
     config
         .idleMode(IdleMode.kCoast)
         .inverted(false)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(30, 20)
+        .smartCurrentLimit(40, 30)
         .secondaryCurrentLimit(50.0);
     SparkUtil.tryUntilOk(
         motor,

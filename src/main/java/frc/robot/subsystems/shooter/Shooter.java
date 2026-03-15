@@ -71,8 +71,8 @@ public class Shooter extends SubsystemBase {
     switch (frc.robot.Constants.currentMode) {
       case REAL:
       case REPLAY:
-        ffModel = new SimpleMotorFeedforward(0.1, 0.00185); // TODO TS: SysId
-        io.configurePID(0.0001, 0.0, 0.0); // TODO TS: SysId
+        ffModel = new SimpleMotorFeedforward(0.1, 0.0018); // TODO TS: SysId
+        io.configurePID(0.000175, 0.0, 0.0); // TODO TS: SysId
         break;
       case SIM:
         ffModel = new SimpleMotorFeedforward(0.0, 0.016);
@@ -169,7 +169,7 @@ public class Shooter extends SubsystemBase {
   private Command stateCommand(State state) {
     return Commands.sequence(
         runOnce(() -> this.state = state),
-        Commands.waitSeconds(0.25),
+        Commands.waitSeconds(0.1),
         run(() -> {}).until(this::onTarget));
   }
 

@@ -28,7 +28,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.util.SparkUtil;
 
 public class IntakeIOSparkFlex implements IntakeIO {
-  private final SparkFlex motor = new SparkFlex(1, MotorType.kBrushless); // TODO TS: CAN ID
+  private final SparkFlex motor = new SparkFlex(12, MotorType.kBrushless);
   private final RelativeEncoder encoder = motor.getEncoder();
   private final SparkClosedLoopController pid = motor.getClosedLoopController();
   private final SparkMaxConfig config = new SparkMaxConfig();
@@ -36,10 +36,10 @@ public class IntakeIOSparkFlex implements IntakeIO {
   public IntakeIOSparkFlex() {
     config
         .idleMode(IdleMode.kCoast)
-        .inverted(false)
+        .inverted(true)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(30, 20)
-        .secondaryCurrentLimit(50.0);
+        .smartCurrentLimit(60, 50)
+        .secondaryCurrentLimit(80.0);
     SparkUtil.tryUntilOk(
         motor,
         5,

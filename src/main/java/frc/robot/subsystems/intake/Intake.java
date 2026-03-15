@@ -39,9 +39,9 @@ public class Intake extends SubsystemBase {
   }
 
   private final LoggedNetworkNumber intakeInput =
-      new LoggedNetworkNumber("Intake/Intake Speed", 1000.0);
+      new LoggedNetworkNumber("Intake/Intake Speed", 2000.0);
   private final LoggedNetworkNumber ejectInput =
-      new LoggedNetworkNumber("Intake/Eject Speed", -500.0);
+      new LoggedNetworkNumber("Intake/Eject Speed", -1000.0);
 
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
@@ -64,8 +64,8 @@ public class Intake extends SubsystemBase {
     switch (frc.robot.Constants.currentMode) {
       case REAL:
       case REPLAY:
-        ffModel = new SimpleMotorFeedforward(0.1, 0.00185); // TODO TS: SysId
-        io.configurePID(0.0001, 0.0, 0.0); // TODO TS: SysId
+        ffModel = new SimpleMotorFeedforward(0.1, 0.001875); // TODO TS: SysId
+        io.configurePID(0.0003, 0.0, 0.0); // TODO TS: SysId
         break;
       case SIM:
         ffModel = new SimpleMotorFeedforward(0.0, 0.016);
@@ -156,7 +156,7 @@ public class Intake extends SubsystemBase {
   private Command stateCommand(State state) {
     return Commands.sequence(
         runOnce(() -> this.state = state),
-        Commands.waitSeconds(0.25),
+        Commands.waitSeconds(0.1),
         run(() -> {}).until(this::onTarget));
   }
 

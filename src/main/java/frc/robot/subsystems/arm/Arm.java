@@ -19,7 +19,7 @@ public class Arm extends SubsystemBase {
     public static final double GEAR_RATIO = 5.0 * 5.0 / 12.0 * 26.0;
 
     public static final Rotation2d MINIMUM = Rotation2d.fromDegrees(-15.0);
-    public static final Rotation2d MAXIMUM = Rotation2d.fromDegrees(120.0);
+    public static final Rotation2d MAXIMUM = Rotation2d.fromDegrees(125.0);
   }
 
   private static enum State {
@@ -30,9 +30,8 @@ public class Arm extends SubsystemBase {
     SYSID
   }
 
-  private final LoggedNetworkNumber intakeInput =
-      new LoggedNetworkNumber("Arm/Intake Angle", -15.0);
-  private final LoggedNetworkNumber stowInput = new LoggedNetworkNumber("Arm/Stow Angle", 120.0);
+  private final LoggedNetworkNumber intakeInput = new LoggedNetworkNumber("Arm/Intake Angle", -8.0);
+  private final LoggedNetworkNumber stowInput = new LoggedNetworkNumber("Arm/Stow Angle", 125.0);
 
   private final ArmIO io;
   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -44,7 +43,7 @@ public class Arm extends SubsystemBase {
   private State state = State.STARTUP;
 
   @AutoLogOutput(key = "Arm/Setpoint")
-  private Rotation2d setpoint;
+  private Rotation2d setpoint = null;
 
   /** Creates a new Arm. */
   public Arm(ArmIO io) {
@@ -55,8 +54,8 @@ public class Arm extends SubsystemBase {
     switch (frc.robot.Constants.currentMode) {
       case REAL:
       case REPLAY:
-        ffModel = new ArmFeedforward(0.1, 0.35, 3.74, 0.02);
-        io.configurePID(1.0, 0.0, 0.0);
+        ffModel = new ArmFeedforward(0.1, 0.5, 3.74, 0.02); // TODO TS: SysId
+        io.configurePID(0.02, 0.0, 0.0); // TODO TS: SysId
         break;
       case SIM:
         ffModel = new ArmFeedforward(0.0, 0.35, 3.74, 0.02);
@@ -118,6 +117,8 @@ public class Arm extends SubsystemBase {
 
     if (state != State.INTAKE_HOLD) {
       io.setPosition(setpoint, ffVolts);
+    } else {
+      io.setVoltage(ffVolts);
     }
   }
 
@@ -128,7 +129,7 @@ public class Arm extends SubsystemBase {
 
   @AutoLogOutput(key = "Arm/AtPosition")
   private boolean atPosition() {
-    return Math.abs(getError().getDegrees()) < 1.0;
+    return Math.abs(getError().getDegrees()) < 3.0;
   }
 
   @AutoLogOutput(key = "Arm/OnTarget")
@@ -151,7 +152,7 @@ public class Arm extends SubsystemBase {
   private Command stateCommand(State state) {
     return Commands.sequence(
         runOnce(() -> this.state = state),
-        Commands.waitSeconds(0.25),
+        Commands.waitSeconds(0.1),
         run(() -> {}).until(this::onTarget));
   }
 

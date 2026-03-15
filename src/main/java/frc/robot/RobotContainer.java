@@ -39,7 +39,7 @@ import frc.robot.subsystems.shooter.ShooterIOSparkFlex;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOSim;
-import frc.robot.subsystems.spindexer.SpindexerIOSparkFlex;
+import frc.robot.subsystems.spindexer.SpindexerIOSparkMax;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -86,7 +86,7 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIOSparkFlex(), () -> 0.0);
         intake = new Intake(new IntakeIOSparkFlex());
         arm = new Arm(new ArmIOSparkMax());
-        spindexer = new Spindexer(new SpindexerIOSparkFlex());
+        spindexer = new Spindexer(new SpindexerIOSparkMax());
         vision =
             new Vision(
                 drive::addVisionMeasurement,

@@ -28,11 +28,11 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.util.SparkUtil;
 
 public class ShooterIOSparkFlex implements ShooterIO {
-  private final SparkFlex leftMotor = new SparkFlex(12, MotorType.kBrushless);
+  private final SparkFlex leftMotor = new SparkFlex(14, MotorType.kBrushless);
   private final RelativeEncoder leftEncoder = leftMotor.getEncoder();
   private final SparkClosedLoopController leftPID = leftMotor.getClosedLoopController();
   private final SparkMaxConfig leftConfig = new SparkMaxConfig();
-  private final SparkFlex rightMotor = new SparkFlex(13, MotorType.kBrushless);
+  private final SparkFlex rightMotor = new SparkFlex(15, MotorType.kBrushless);
   private final RelativeEncoder rightEncoder = leftMotor.getEncoder();
   private final SparkClosedLoopController rightPID = leftMotor.getClosedLoopController();
   private final SparkMaxConfig rightConfig = new SparkMaxConfig();
