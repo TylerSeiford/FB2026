@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriveConductor;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOSim;
@@ -45,7 +46,6 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
-import frc.robot.util.FieldConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -67,6 +67,9 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+
+  // Conductors
+  private final DriveConductor driveConductor;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -134,6 +137,7 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
+    driveConductor = new DriveConductor(drive::getPose);
 
     NamedCommands.registerCommand("Drop Arm", arm.intake());
     NamedCommands.registerCommand("Stow Arm", arm.stow());
@@ -143,13 +147,7 @@ public class RobotContainer {
         "Shoot",
         Commands.sequence(
             Commands.parallel(
-                shooter.auto(),
-                DriveCommands.autoDriveAtTarget(
-                    drive,
-                    Constants.shooterOffset,
-                    () -> FieldConstants.Hub.oppTopCenterPoint.toTranslation2d(),
-                    () -> FieldConstants.Hub.topCenterPoint.toTranslation2d(),
-                    Rotation2d.fromDegrees(1.0))),
+                shooter.auto(), driveConductor.aimAtHub(drive, Rotation2d.fromDegrees(1.0))),
             spindexer.shoot(),
             Commands.waitSeconds(2.5),
             spindexer.stop(),
@@ -251,36 +249,19 @@ public class RobotContainer {
                 () -> -controller.getLeftX() * 0.5,
                 () -> -controller.getRightX() * 0.5)); // TODO: Improve speed adjustment
 
-    // Shoot while left trigger is held
+    // Auto shoot & relay while left trigger is held
     controller
         .leftTrigger()
         .onTrue(Commands.sequence(shooter.auto(), spindexer.shoot(), arm.stow()))
         .whileTrue(
-            DriveCommands.joystickDriveAtTarget(
-                drive,
-                Constants.shooterOffset,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () ->
-                    FieldConstants.Hub.oppTopCenterPoint
-                        .toTranslation2d(), // TODO: Use shot conductor to select target
-                () ->
-                    FieldConstants.Hub.topCenterPoint
-                        .toTranslation2d())) // TODO: Use shot conductor to select target
+            driveConductor.driveAtTarget(
+                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX()))
         .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
 
     // Manual shoot while left bumper is held
     controller
         .leftBumper()
         .onTrue(Commands.sequence(shooter.manualHub(), spindexer.shoot(), arm.stow()))
-        .whileTrue(
-            DriveCommands.joystickDriveAtTarget(
-                drive,
-                Constants.shooterOffset,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> FieldConstants.Hub.oppTopCenterPoint.toTranslation2d(),
-                () -> FieldConstants.Hub.topCenterPoint.toTranslation2d()))
         .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
 
     // Manual relay while right bumper is held
@@ -288,13 +269,8 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(Commands.sequence(shooter.manualRelay(), spindexer.shoot(), arm.stow()))
         .whileTrue(
-            DriveCommands.joystickDriveAtTarget(
-                drive,
-                Constants.shooterOffset,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> FieldConstants.LeftBump.oppFarLeftCorner, // TODO
-                () -> FieldConstants.LeftBump.farLeftCorner)) // TODO
+            driveConductor.driveAtRelay(
+                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX()))
         .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
 
     // Intake while right trigger is held

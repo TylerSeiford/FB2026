@@ -44,7 +44,7 @@ public class DriveCommands {
 
   private DriveCommands() {}
 
-  private static boolean isFlipped() {
+  public static boolean isFlipped() {
     return DriverStation.getAlliance().isPresent()
         && DriverStation.getAlliance().get() == Alliance.Red;
   }
@@ -150,36 +150,8 @@ public class DriveCommands {
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
 
-  private static Rotation2d getTargetAngle(
-      Pose2d robotPose, Translation2d target, Transform2d transform) {
-    Pose2d offsetPose = robotPose.transformBy(transform);
-    Translation2d delta = target.minus(offsetPose.getTranslation());
-    Rotation2d targetAngle = delta.getAngle().minus(transform.getRotation());
-    return targetAngle;
-  }
-
-  public static Command joystickDriveAtTarget(
-      Drive drive,
-      Transform2d offset,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
-      Supplier<Translation2d> redTarget,
-      Supplier<Translation2d> blueTarget) {
-    return joystickDriveAtAngle(
-        drive,
-        xSupplier,
-        ySupplier,
-        () ->
-            getTargetAngle(
-                drive.getPose(), (isFlipped() ? redTarget.get() : blueTarget.get()), offset));
-  }
-
   public static Command autoDriveAtTarget(
-      Drive drive,
-      Transform2d offset,
-      Supplier<Translation2d> redTarget,
-      Supplier<Translation2d> blueTarget,
-      Rotation2d angleTolerance) {
+      Drive drive, Supplier<Rotation2d> rotationSupplier, Rotation2d angleTolerance) {
 
     // Create PID controller
     ProfiledPIDController angleController =
@@ -193,13 +165,9 @@ public class DriveCommands {
 
     return Commands.runEnd(
             () -> {
-              Rotation2d targetAngle =
-                  getTargetAngle(
-                      drive.getPose(), (isFlipped() ? redTarget.get() : blueTarget.get()), offset);
-
               double omega =
                   angleController.calculate(
-                      drive.getRotation().getRadians(), targetAngle.getRadians());
+                      drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
               drive.runVelocity(new ChassisSpeeds(0.0, 0.0, omega));
             },
             () -> drive.stop(),
