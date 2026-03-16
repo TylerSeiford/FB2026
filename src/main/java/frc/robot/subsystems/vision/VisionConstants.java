@@ -20,12 +20,20 @@ public class VisionConstants {
     public static class SimCameraProperties {
       public final int pixelWidth;
       public final int pixelHeight;
-      public final Rotation2d fov;
+      public final Rotation2d hfov;
+      public final double fps;
 
-      public SimCameraProperties(int pixelWidth, int pixelHeight, Rotation2d fov) {
+      public SimCameraProperties(int pixelWidth, int pixelHeight, Rotation2d hfov, double fps) {
         this.pixelWidth = pixelWidth;
         this.pixelHeight = pixelHeight;
-        this.fov = fov;
+        this.hfov = hfov;
+        this.fps = fps;
+      }
+
+      public Rotation2d diagFOV() {
+        var vfov = new Rotation2d(hfov.getRadians() / pixelWidth * pixelHeight);
+        return new Rotation2d(
+            Math.sqrt(Math.pow(hfov.getRadians(), 2) + Math.pow(vfov.getRadians(), 2)));
       }
     }
 
@@ -60,7 +68,7 @@ public class VisionConstants {
             Units.inchesToMeters(13.5625),
             new Rotation3d(
                 Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(90))),
-        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(100))),
+        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(70), 20.0)),
     new CameraConfig(
         "Camera1",
         new Transform3d(
@@ -68,10 +76,8 @@ public class VisionConstants {
             Units.inchesToMeters(12.9375),
             Units.inchesToMeters(16.625),
             new Rotation3d(
-                Units.degreesToRadians(0),
-                Units.degreesToRadians(-45),
-                Units.degreesToRadians(135))),
-        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(70))),
+                Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(180))),
+        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(70), 20.0)),
     new CameraConfig(
         "Camera2",
         new Transform3d(
@@ -82,7 +88,7 @@ public class VisionConstants {
                 Units.degreesToRadians(0),
                 Units.degreesToRadians(-15),
                 Units.degreesToRadians(345))),
-        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(90))),
+        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(70), 20.0)),
     new CameraConfig(
         "Camera3",
         new Transform3d(
@@ -91,9 +97,9 @@ public class VisionConstants {
             Units.inchesToMeters(16.625),
             new Rotation3d(
                 Units.degreesToRadians(0),
-                Units.degreesToRadians(-45),
-                Units.degreesToRadians(225))),
-        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(80)))
+                Units.degreesToRadians(-15),
+                Units.degreesToRadians(255))),
+        new CameraConfig.SimCameraProperties(1280, 720, Rotation2d.fromDegrees(70), 20.0))
   };
 
   // Basic filtering thresholds
@@ -107,11 +113,7 @@ public class VisionConstants {
 
   // Standard deviation multipliers for each camera
   // (Adjust to trust some cameras more than others)
-  public static double[] cameraStdDevFactors =
-      new double[] {
-        1.0, // Camera 0
-        1.0 // Camera 1
-      };
+  public static double[] cameraStdDevFactors = new double[] {1.0, 1.0, 1.0, 1.0};
 
   // Multipliers to apply for MegaTag 2 observations
   public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve

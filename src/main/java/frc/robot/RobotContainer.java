@@ -274,9 +274,6 @@ public class RobotContainer {
     controller
         .rightBumper()
         .onTrue(Commands.sequence(shooter.manualRelay(), spindexer.shoot()))
-        .whileTrue(
-            driveConductor.driveAtRelay(
-                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX()))
         .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
 
     // Intake while right trigger is held
