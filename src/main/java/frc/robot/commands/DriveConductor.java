@@ -128,13 +128,30 @@ public class DriveConductor {
         drive, xSupplier, ySupplier, () -> hubRelative().getRotation());
   }
 
+  public Command aimAtRelay(Drive drive, Rotation2d tolerance) {
+    return DriveCommands.autoDriveAtTarget(drive, () -> relayRelative().getRotation(), tolerance);
+  }
+
   public Command driveAtRelay(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     return DriveCommands.joystickDriveAtAngle(
         drive, xSupplier, ySupplier, () -> relayRelative().getRotation());
   }
 
+  public Command aimAtTarget(Drive drive, Rotation2d tolerance) {
+    return DriveCommands.autoDriveAtTarget(drive, () -> targetRelative().getRotation(), tolerance);
+  }
+
   public Command driveAtTarget(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     return DriveCommands.joystickDriveAtAngle(
         drive, xSupplier, ySupplier, () -> targetRelative().getRotation());
+  }
+
+  public static Command driveAtAngle(
+      Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Rotation2d angle) {
+    return DriveCommands.joystickDriveAtAngle(
+        drive,
+        xSupplier,
+        ySupplier,
+        () -> DriveCommands.isFlipped() ? angle.plus(Rotation2d.fromDegrees(180)) : angle);
   }
 }

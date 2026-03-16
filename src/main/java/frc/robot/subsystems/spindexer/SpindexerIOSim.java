@@ -23,7 +23,7 @@ public class SpindexerIOSim implements SpindexerIO {
   private final FlywheelSim sim =
       new FlywheelSim(
           LinearSystemId.createFlywheelSystem(
-              DCMotor.getNEO(1), 0.004, Spindexer.Constants.GEAR_RATIO),
+              DCMotor.getNEO(1), 0.18, Spindexer.Constants.GEAR_RATIO),
           DCMotor.getNEO(1));
   private final PIDController pid = new PIDController(0.0, 0.0, 0.0);
 

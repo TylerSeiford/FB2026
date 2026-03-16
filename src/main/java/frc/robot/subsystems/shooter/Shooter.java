@@ -42,11 +42,11 @@ public class Shooter extends SubsystemBase {
   }
 
   private final LoggedNetworkNumber manualRelayInput =
-      new LoggedNetworkNumber("Shooter/Manual Relay Speed", 5000.0);
+      new LoggedNetworkNumber("Shooter/Manual Relay Speed", 5500.0);
   private final LoggedNetworkNumber manualHubInput =
-      new LoggedNetworkNumber("Shooter/Manual Hub Speed", 4000.0);
+      new LoggedNetworkNumber("Shooter/Manual Hub Speed", 3600.0);
   private final LoggedNetworkNumber ejectInput =
-      new LoggedNetworkNumber("Shooter/Eject Speed", -1000.0);
+      new LoggedNetworkNumber("Shooter/Eject Speed", -2000.0);
 
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();

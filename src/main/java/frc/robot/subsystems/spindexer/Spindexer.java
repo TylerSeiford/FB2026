@@ -64,12 +64,12 @@ public class Spindexer extends SubsystemBase {
     switch (frc.robot.Constants.currentMode) {
       case REAL:
       case REPLAY:
-        ffModel = new SimpleMotorFeedforward(0.1, 0.0022); // TODO TS: SysId
-        io.configurePID(0.000175, 0.0, 0.0); // TODO TS: SysId
+        ffModel = new SimpleMotorFeedforward(0.1, 0.0022 * Constants.GEAR_RATIO); // TODO TS: SysId
+        io.configurePID(0.000175 * Constants.GEAR_RATIO, 0.0, 0.0); // TODO TS: SysId
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.18);
-        io.configurePID(0.1, 0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.9);
+        io.configurePID(1.0, 0.0, 0.0);
         break;
       default:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);

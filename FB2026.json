@@ -1,7 +1,7 @@
 {
   "hubs": [
     {
-      "x": 3840,
+      "x": 0,
       "y": 0,
       "width": 1280,
       "height": 1392,
@@ -13,9 +13,25 @@
             "/AdvantageKit/RealOutputs/DriveCommands/joystickDriveAtAngle",
             "/AdvantageKit/RealOutputs/DriveCommands/joystickDriveAtAngle/Setpoint",
             "/AdvantageKit/RealOutputs/DriveCommands/joystickDriveAtAngle/Goal",
-            "/AdvantageKit/RealOutputs/Odometry/Robot",
-            "/AdvantageKit/RealOutputs/Vision/Summary",
-            "/AdvantageKit/RealOutputs/Drive"
+            "/AdvantageKit/RealOutputs/Drive",
+            "/RealOutputs",
+            "/RealOutputs/Vision",
+            "/RealOutputs/Vision/Summary",
+            "/RealOutputs/Vision/Camera0",
+            "/RealOutputs/Vision/Camera0/TagPoses",
+            "/RealOutputs/Vision/Camera1",
+            "/RealOutputs/Vision/Camera1/TagPoses",
+            "/RealOutputs/Vision/Camera2",
+            "/RealOutputs/Vision/Camera2/TagPoses",
+            "/RealOutputs/Vision/Camera3",
+            "/RealOutputs/Vision/Camera3/TagPoses",
+            "/RealOutputs/Vision/Camera4",
+            "/RealOutputs/Vision/Camera4/TagPoses",
+            "/RealOutputs/Vision/Camera5",
+            "/RealOutputs/Vision/Camera5/TagPoses",
+            "/RealOutputs/Vision/Summary/TagPoses",
+            "/AdvantageKit/RealOutputs/DriveCommands/getTargetAngle",
+            "/AdvantageKit/RealOutputs/DriveCommands"
           ]
         },
         "tabs": {
@@ -45,7 +61,7 @@
                   },
                   {
                     "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/RobotPosesAccepted",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Summary/RobotPosesAccepted",
                     "logType": "Pose3d[]",
                     "visible": true,
                     "options": {
@@ -54,7 +70,7 @@
                   },
                   {
                     "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/RobotPosesRejected",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Summary/RobotPosesRejected",
                     "logType": "Pose3d[]",
                     "visible": true,
                     "options": {
@@ -63,155 +79,49 @@
                   },
                   {
                     "type": "arrow",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/TagPoses",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Summary/TagPoses",
                     "logType": "Pose3d[]",
                     "visible": true,
                     "options": {
-                      "position": "center"
+                      "position": "back"
                     }
                   },
                   {
-                    "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera1/RobotPosesAccepted",
+                    "type": "heatmap",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Summary/RobotPosesAccepted",
                     "logType": "Pose3d[]",
-                    "visible": true,
+                    "visible": false,
                     "options": {
-                      "color": "#00ff00"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera1/RobotPosesRejected",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#ff0000"
+                      "timeRange": "enabled"
                     }
                   },
                   {
                     "type": "arrow",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera1/TagPoses",
-                    "logType": "Pose3d[]",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/DriveConductor/Global/Shooter",
+                    "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "position": "center"
+                      "position": "back"
                     }
                   },
                   {
                     "type": "trajectory",
-                    "logKey": "NT:/PathPlanner/activePath",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/DriveConductor/Line/Target",
                     "logType": "Pose2d[]",
                     "visible": true,
                     "options": {
                       "color": "#00ff00",
                       "size": "normal"
                     }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "NT:/PathPlanner/targetPose",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "color": "#0000ff"
-                    }
                   }
                 ],
                 "field": "FRC:2026 Field",
                 "orientation": 0,
-                "size": "large"
+                "size": "medium"
               },
               "controllerUUID": "ntufoqet6lkaiayrlahdc867833keucs",
               "renderer": null,
               "controlsHeight": 409
-            },
-            {
-              "type": 3,
-              "title": "3D Field",
-              "controller": {
-                "sources": [
-                  {
-                    "type": "robot",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Robot",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "Crab Bot"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/RobotPosesAccepted",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {
-                      "model": "Crab Bot",
-                      "color": "#00ff00"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/RobotPosesRejected",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {
-                      "model": "Crab Bot",
-                      "color": "#ff0000"
-                    }
-                  },
-                  {
-                    "type": "axes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/TagPoses",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera0/RobotPosesAccepted",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {
-                      "model": "Crab Bot",
-                      "color": "#00ff00"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera1/RobotPosesRejected",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {
-                      "model": "Crab Bot",
-                      "color": "#ff0000"
-                    }
-                  },
-                  {
-                    "type": "axes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Vision/Camera1/TagPoses",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {}
-                  }
-                ],
-                "game": "FRC:2026 Field"
-              },
-              "controllerUUID": "hepmcwqtnsfiw0xspf2kj38pgimi9j15",
-              "renderer": {
-                "cameraIndex": -1,
-                "orbitFov": 50,
-                "cameraPosition": [
-                  15.338934228317843,
-                  10.882766013502733,
-                  -0.0007075369212492799
-                ],
-                "cameraTarget": [
-                  1.6669844502680566,
-                  -1.6422459045839946,
-                  0.15721013598542247
-                ]
-              },
-              "controlsHeight": 419
             },
             {
               "type": 9,
