@@ -1,0 +1,144 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.9,
+        "y": 7.4
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.9,
+        "y": 7.4
+      },
+      "isLocked": true,
+      "linkedName": "Left Trench Entrance"
+    },
+    {
+      "anchor": {
+        "x": 8.0,
+        "y": 6.875
+      },
+      "prevControl": {
+        "x": 7.4696699141100895,
+        "y": 7.4053300858899105
+      },
+      "nextControl": {
+        "x": 8.353553390593273,
+        "y": 6.521446609406726
+      },
+      "isLocked": true,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.25,
+        "y": 5.0
+      },
+      "prevControl": {
+        "x": 8.603553390593273,
+        "y": 5.353553390593273
+      },
+      "nextControl": {
+        "x": 6.835786437626905,
+        "y": 3.585786437626905
+      },
+      "isLocked": true,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.5,
+        "y": 7.4
+      },
+      "prevControl": {
+        "x": 6.5,
+        "y": 7.4
+      },
+      "nextControl": {
+        "x": 4.5,
+        "y": 7.4
+      },
+      "isLocked": true,
+      "linkedName": "Left Trench Exit"
+    },
+    {
+      "anchor": {
+        "x": 3.9,
+        "y": 7.4
+      },
+      "prevControl": {
+        "x": 4.9,
+        "y": 7.4
+      },
+      "nextControl": null,
+      "isLocked": true,
+      "linkedName": "Left Trench Entrance"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.696969696969699,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 1.2962962962962958,
+      "rotationDegrees": -135.0
+    },
+    {
+      "waypointRelativePos": 1.9,
+      "rotationDegrees": -165.0
+    },
+    {
+      "waypointRelativePos": 2.249158249158251,
+      "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 3.0033670033670052,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.2,
+      "maxWaypointRelativePos": 2.20197044334975,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 8.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 1440.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Start Intake",
+      "waypointRelativePos": 0.7,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.83,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 1440.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 14.999999999999998
+  },
+  "reversed": false,
+  "folder": "Left",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 14.999999999999998
+  },
+  "useDefaultConstraints": true
+}

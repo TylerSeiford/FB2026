@@ -5,44 +5,44 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "named",
+          "data": {
+            "name": "Drop Arm"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Trench-Left Mid Intake-Left Trench"
+          }
+        },
+        {
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Drop Arm"
+                  "name": "Start Shoot"
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Start Intake"
+                  "waitTime": 2.5
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Depot"
-          }
-        },
-        {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stow Arm"
+                  "name": "Stop Shoot"
                 }
               },
               {
@@ -50,57 +50,39 @@
                 "data": {
                   "name": "Stop Intake"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Depot-Bump"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Top Intake"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Top Bump Return"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stow Arm"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Stop Intake"
+                  "pathName": "Left Trench-Mid Intake-Left Trench"
                 }
               }
             ]
           }
         },
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "Shoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Shoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              }
+            ]
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Left",
   "choreoAuto": false
 }
