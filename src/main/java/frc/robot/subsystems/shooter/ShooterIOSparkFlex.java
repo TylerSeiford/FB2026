@@ -13,6 +13,10 @@
 
 package frc.robot.subsystems.shooter;
 
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
+import au.grapplerobotics.interfaces.LaserCanInterface.RegionOfInterest;
+import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -36,6 +40,7 @@ public class ShooterIOSparkFlex implements ShooterIO {
   private final RelativeEncoder rightEncoder = leftMotor.getEncoder();
   private final SparkClosedLoopController rightPID = leftMotor.getClosedLoopController();
   private final SparkMaxConfig rightConfig = new SparkMaxConfig();
+  private final LaserCan lasercan = new LaserCan(16);
 
   public ShooterIOSparkFlex() {
     leftConfig
@@ -63,6 +68,14 @@ public class ShooterIOSparkFlex implements ShooterIO {
         () ->
             rightMotor.configure(
                 rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    try {
+      lasercan.setRangingMode(RangingMode.SHORT);
+      lasercan.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
+      lasercan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
+    } catch (Exception e) {
+      System.out.println("Failed to configure LaserCAN: " + e.getMessage());
+    }
   }
 
   @Override
@@ -85,6 +98,8 @@ public class ShooterIOSparkFlex implements ShooterIO {
           rightMotor.getAppliedOutput() * rightMotor.getBusVoltage()
         };
     inputs.currentAmps = new double[] {leftMotor.getOutputCurrent(), rightMotor.getOutputCurrent()};
+
+    inputs.laserDistanceMeters = lasercan.getMeasurement().distance_mm / 1000.0;
   }
 
   @Override

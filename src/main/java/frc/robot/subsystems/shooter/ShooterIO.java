@@ -22,6 +22,7 @@ public interface ShooterIO {
     public double[] velocitiesRadPerSec = new double[0];
     public double[] appliedVolts = new double[0];
     public double[] currentAmps = new double[0];
+    public double laserDistanceMeters = 0.0;
   }
 
   /** Updates the set of loggable inputs. */

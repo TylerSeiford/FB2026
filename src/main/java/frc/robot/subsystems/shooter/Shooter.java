@@ -51,7 +51,8 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
   private final SimpleMotorFeedforward ffModel;
-  private final Debouncer debouncer = new Debouncer(0.2);
+  private final Debouncer onTargetDebouncer = new Debouncer(0.2);
+  private final Debouncer hasBallDebouncer = new Debouncer(0.1);
   private final DoubleSupplier speedSupplier;
   private final SysIdRoutine sysId;
 
@@ -142,7 +143,17 @@ public class Shooter extends SubsystemBase {
 
   @AutoLogOutput(key = "Shooter/OnTarget")
   private boolean onTarget() {
-    return debouncer.calculate(atSpeed());
+    return onTargetDebouncer.calculate(atSpeed());
+  }
+
+  @AutoLogOutput(key = "Shooter/LaserBlocked")
+  private boolean laserBlocked() {
+    return inputs.laserDistanceMeters < Units.inchesToMeters(3.0);
+  }
+
+  @AutoLogOutput(key = "Shooter/HasBall")
+  private boolean HasBall() {
+    return hasBallDebouncer.calculate(laserBlocked());
   }
 
   /** Run open loop at the specified voltage. */
