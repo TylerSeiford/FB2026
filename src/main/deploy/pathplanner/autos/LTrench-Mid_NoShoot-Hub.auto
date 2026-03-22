@@ -11,15 +11,28 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "armDown"
+                  "name": "startIntake"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "startIntake"
+                  "name": "armDown"
                 }
               },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Left Trench-Mid_NoShoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
               {
                 "type": "named",
                 "data": {
@@ -29,7 +42,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.5
+                  "waitTime": 6.0
                 }
               }
             ]
@@ -48,7 +61,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left Trench-Depot"
+                  "pathName": "Left Trench-Hub"
                 }
               }
             ]
@@ -67,7 +80,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 6.0
                 }
               }
             ]
