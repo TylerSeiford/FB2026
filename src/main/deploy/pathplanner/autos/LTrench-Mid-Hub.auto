@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "trench in and out"
+            "pathName": "Left Trench-Hub"
           }
         },
         {
@@ -68,7 +68,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "second part to trench in and out"
+            "pathName": "Left Trench-Mid"
           }
         },
         {
@@ -99,6 +99,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "WIP",
+  "folder": null,
   "choreoAuto": false
 }

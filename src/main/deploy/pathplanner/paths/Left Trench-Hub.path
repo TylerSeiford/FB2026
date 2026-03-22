@@ -108,7 +108,7 @@
     "rotation": 12.535549543689404
   },
   "reversed": false,
-  "folder": "WIP",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 18.853158764419156
