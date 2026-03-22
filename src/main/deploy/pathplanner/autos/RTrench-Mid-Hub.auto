@@ -48,7 +48,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left Trench-Mid"
+                  "pathName": "Right Trench-Mid"
                 }
               }
             ]
@@ -86,7 +86,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left Trench-Hub"
+                  "pathName": "Right Trench-Hub"
                 }
               }
             ]

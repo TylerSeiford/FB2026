@@ -48,7 +48,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left Trench-Mid"
+                  "pathName": "Right Trench-Mid"
                 }
               }
             ]
@@ -68,44 +68,6 @@
                 "type": "wait",
                 "data": {
                   "waitTime": 3.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "stopShoot"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Left Trench-Hub"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "shoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.0
                 }
               }
             ]
