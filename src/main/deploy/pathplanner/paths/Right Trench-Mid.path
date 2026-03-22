@@ -52,8 +52,8 @@
         "y": 0.6
       },
       "prevControl": {
-        "x": 7.5,
-        "y": 0.5999999999999992
+        "x": 6.5,
+        "y": 0.5999999999999996
       },
       "nextControl": {
         "x": 4.5,
@@ -78,7 +78,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.6958473625140283,
+      "waypointRelativePos": 1.1039182282793867,
       "rotationDegrees": 180.0
     },
     {
@@ -129,5 +129,5 @@
     "velocity": 0.0,
     "rotation": 180.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
