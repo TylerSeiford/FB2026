@@ -11,38 +11,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "armDown"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "startIntake"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "stopShoot"
+                  "name": "armDown"
                 }
               },
               {
@@ -67,7 +42,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 6.0
                 }
               }
             ]

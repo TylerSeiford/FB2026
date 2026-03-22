@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6,
+        "x": 4.3,
         "y": 0.6
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.85,
+        "x": 4.55,
         "y": 0.6
       },
       "isLocked": true,
-      "linkedName": "Right Trench Entrance"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -52,8 +52,8 @@
         "y": 0.6
       },
       "prevControl": {
-        "x": 6.5,
-        "y": 0.5999999999999996
+        "x": 7.5,
+        "y": 0.5999999999999992
       },
       "nextControl": {
         "x": 4.5,
@@ -127,7 +127,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": 165.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
