@@ -84,7 +84,7 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
-        superstructure = new Superstructure(drive::getPose);
+        superstructure = new Superstructure(drive::getPose, drive::getChassisSpeeds);
         shooter = new Shooter(new ShooterIOSparkFlex(), superstructure::shooterRPM);
         intake = new Intake(new IntakeIOSparkFlex());
         arm = new Arm(new ArmIOSparkMax());
@@ -107,7 +107,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        superstructure = new Superstructure(drive::getPose);
+        superstructure = new Superstructure(drive::getPose, drive::getChassisSpeeds);
         shooter = new Shooter(new ShooterIOSim(), superstructure::shooterRPM);
         intake = new Intake(new IntakeIOSim());
         arm = new Arm(new ArmIOSim());
@@ -130,7 +130,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        superstructure = new Superstructure(drive::getPose);
+        superstructure = new Superstructure(drive::getPose, drive::getChassisSpeeds);
         shooter = new Shooter(new ShooterIO() {}, superstructure::shooterRPM);
         intake = new Intake(new IntakeIO() {});
         arm = new Arm(new ArmIO() {});
