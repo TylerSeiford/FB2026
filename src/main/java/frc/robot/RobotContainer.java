@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.DriveConductor;
-import frc.robot.commands.ShotConductor;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOSim;
@@ -42,6 +40,7 @@ import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOSim;
 import frc.robot.subsystems.spindexer.SpindexerIOSparkMax;
+import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
@@ -58,6 +57,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Superstructure superstructure;
   private final Shooter shooter;
   private final Intake intake;
   private final Arm arm;
@@ -68,10 +68,6 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
-
-  // Conductors
-  private final DriveConductor driveConductor;
-  private final ShotConductor shotConductor;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -88,9 +84,8 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
-        driveConductor = new DriveConductor(drive::getPose);
-        shotConductor = new ShotConductor(driveConductor::mode, driveConductor::targetRelative);
-        shooter = new Shooter(new ShooterIOSparkFlex(), shotConductor::targetShooterRPM);
+        superstructure = new Superstructure(drive::getPose);
+        shooter = new Shooter(new ShooterIOSparkFlex(), superstructure::shooterRPM);
         intake = new Intake(new IntakeIOSparkFlex());
         arm = new Arm(new ArmIOSparkMax());
         spindexer = new Spindexer(new SpindexerIOSparkMax());
@@ -112,9 +107,8 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        driveConductor = new DriveConductor(drive::getPose);
-        shotConductor = new ShotConductor(driveConductor::mode, driveConductor::targetRelative);
-        shooter = new Shooter(new ShooterIOSim(), shotConductor::targetShooterRPM);
+        superstructure = new Superstructure(drive::getPose);
+        shooter = new Shooter(new ShooterIOSim(), superstructure::shooterRPM);
         intake = new Intake(new IntakeIOSim());
         arm = new Arm(new ArmIOSim());
         spindexer = new Spindexer(new SpindexerIOSim());
@@ -136,9 +130,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        driveConductor = new DriveConductor(drive::getPose);
-        shotConductor = new ShotConductor(driveConductor::mode, driveConductor::targetRelative);
-        shooter = new Shooter(new ShooterIO() {}, shotConductor::targetShooterRPM);
+        superstructure = new Superstructure(drive::getPose);
+        shooter = new Shooter(new ShooterIO() {}, superstructure::shooterRPM);
         intake = new Intake(new IntakeIO() {});
         arm = new Arm(new ArmIO() {});
         spindexer = new Spindexer(new SpindexerIO() {});
@@ -154,7 +147,9 @@ public class RobotContainer {
         "Start Shoot",
         Commands.sequence(
             Commands.parallel(
-                shooter.auto(), driveConductor.aimAtHub(drive, Rotation2d.fromDegrees(1.0))),
+                shooter.auto(),
+                DriveCommands.autoDriveAtTarget(
+                    drive, superstructure::angleToTarget, Rotation2d.fromDegrees(1.0))),
             spindexer.shoot()));
     NamedCommands.registerCommand(
         "Stop Shoot", Commands.sequence(spindexer.stop(), shooter.stop()));
@@ -201,32 +196,35 @@ public class RobotContainer {
     controller
         .povUp()
         .whileTrue(
-            DriveConductor.driveAtAngle(
+            DriveCommands.joystickDriveAtAngle(
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                Rotation2d.kZero));
+                () -> DriveCommands.isFlipped() ? Rotation2d.k180deg : Rotation2d.kZero));
     controller
         .povRight()
         .whileTrue(
-            DriveConductor.driveAtAngle(
+            DriveCommands.joystickDriveAtAngle(
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                Rotation2d.kCW_90deg));
+                () -> DriveCommands.isFlipped() ? Rotation2d.kCCW_90deg : Rotation2d.kCW_90deg));
     controller
         .povDown()
         .whileTrue(
-            DriveConductor.driveAtAngle(
-                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), Rotation2d.kPi));
-    controller
-        .povLeft()
-        .whileTrue(
-            DriveConductor.driveAtAngle(
+            DriveCommands.joystickDriveAtAngle(
                 drive,
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
-                Rotation2d.kCCW_90deg));
+                () -> DriveCommands.isFlipped() ? Rotation2d.kZero : Rotation2d.k180deg));
+    controller
+        .povLeft()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -controller.getLeftY(),
+                () -> -controller.getLeftX(),
+                () -> DriveCommands.isFlipped() ? Rotation2d.kCW_90deg : Rotation2d.kCCW_90deg));
 
     // Toggle X pattern when left stick is pressed
     controller.leftStick().toggleOnTrue(Commands.startEnd(drive::stopWithX, drive::stop, drive));
@@ -258,10 +256,15 @@ public class RobotContainer {
         .whileTrue(
             Commands.sequence(
                 Commands.parallel(
-                    shooter.auto(), driveConductor.aimAtTarget(drive, Rotation2d.fromDegrees(1.0))),
+                    shooter.auto(),
+                    DriveCommands.autoDriveAtTarget(
+                        drive, superstructure::angleToTarget, Rotation2d.fromDegrees(1.0))),
                 spindexer.shoot(),
-                driveConductor.driveAtTarget(
-                    drive, () -> -controller.getLeftY(), () -> -controller.getLeftX())))
+                DriveCommands.joystickDriveAtAngle(
+                    drive,
+                    () -> -controller.getLeftY(),
+                    () -> -controller.getLeftX(),
+                    superstructure::angleToTarget)))
         .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
 
     // Manual shoot while left bumper is held
