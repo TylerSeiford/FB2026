@@ -26,8 +26,8 @@ public class ArmIOSparkMax implements ArmIO {
         .idleMode(IdleMode.kBrake)
         .inverted(true)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(5, 5)
-        .secondaryCurrentLimit(15.0);
+        .smartCurrentLimit(35, 5)
+        .secondaryCurrentLimit(40.0);
     config.absoluteEncoder.inverted(false).positionConversionFactor(360.0);
     config
         .closedLoop

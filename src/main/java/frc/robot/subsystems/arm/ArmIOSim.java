@@ -34,8 +34,8 @@ public class ArmIOSim implements ArmIO {
     sim.update(0.02);
 
     inputs.position = Rotation2d.fromRadians(sim.getAngleRads());
-    inputs.appliedVolts = new double[] {appliedVolts, appliedVolts};
-    inputs.currentAmps = new double[] {sim.getCurrentDrawAmps(), sim.getCurrentDrawAmps()};
+    inputs.appliedVolts = new double[] {appliedVolts};
+    inputs.currentAmps = new double[] {sim.getCurrentDrawAmps()};
   }
 
   @Override

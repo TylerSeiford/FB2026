@@ -18,20 +18,20 @@ public class Arm extends SubsystemBase {
     // https://www.reca.lc/arm?armMass=%7B%22s%22%3A8%2C%22u%22%3A%22lbs%22%7D&comLength=%7B%22s%22%3A8%2C%22u%22%3A%22in%22%7D&currentLimit=%7B%22s%22%3A60%2C%22u%22%3A%22A%22%7D&efficiency=90&endAngle=%7B%22s%22%3A150%2C%22u%22%3A%22deg%22%7D&iterationLimit=10000&motor=%7B%22quantity%22%3A1%2C%22name%22%3A%22NEO%20Vortex%22%7D&ratio=%7B%22magnitude%22%3A53.166%2C%22ratioType%22%3A%22Reduction%22%7D&startAngle=%7B%22s%22%3A0%2C%22u%22%3A%22deg%22%7D
     public static final double GEAR_RATIO = 5.0 * 5.0 / 12.0 * 26.0;
 
-    public static final Rotation2d MINIMUM = Rotation2d.fromDegrees(-15.0);
+    public static final Rotation2d MINIMUM = Rotation2d.fromDegrees(-12.0);
     public static final Rotation2d MAXIMUM = Rotation2d.fromDegrees(125.0);
   }
 
   private static enum State {
     STARTUP,
-    INTAKE_MOVE,
-    INTAKE_HOLD,
+    INTAKE,
     STOW,
     SYSID
   }
 
-  private final LoggedNetworkNumber intakeInput = new LoggedNetworkNumber("Arm/Intake Angle", -8.0);
-  private final LoggedNetworkNumber stowInput = new LoggedNetworkNumber("Arm/Stow Angle", 125.0);
+  private final LoggedNetworkNumber intakeInput =
+      new LoggedNetworkNumber("Arm/Intake Angle", -11.0);
+  private final LoggedNetworkNumber stowInput = new LoggedNetworkNumber("Arm/Stow Angle", 120.0);
 
   private final ArmIO io;
   private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
@@ -87,20 +87,8 @@ public class Arm extends SubsystemBase {
         // On init, set the setpoint to the current position
         if (setpoint == null) setAngle(inputs.position);
         break;
-      case INTAKE_MOVE:
-        // If we are moving to the intake position and have reached it, transition to holding
-        if (onTarget()) {
-          state = State.INTAKE_HOLD;
-        } else {
-          setAngle(Rotation2d.fromDegrees(intakeInput.get()));
-        }
-        break;
-      case INTAKE_HOLD:
-        // If we are holding the intake position and have moved away from it, transition back to
-        // moving
-        if (!onTarget()) {
-          state = State.INTAKE_MOVE;
-        }
+      case INTAKE:
+        setAngle(Rotation2d.fromDegrees(intakeInput.get()));
         break;
       case STOW:
         setAngle(Rotation2d.fromDegrees(stowInput.get()));
@@ -114,12 +102,7 @@ public class Arm extends SubsystemBase {
 
     double ffVolts = ffModel.calculate(inputs.position.getRadians(), 0.0);
     Logger.recordOutput("Arm/ffVolts", ffVolts);
-
-    if (state != State.INTAKE_HOLD) {
-      io.setPosition(setpoint, ffVolts);
-    } else {
-      io.setVoltage(ffVolts);
-    }
+    io.setPosition(setpoint, ffVolts);
   }
 
   @AutoLogOutput(key = "Arm/Error")
@@ -158,7 +141,7 @@ public class Arm extends SubsystemBase {
 
   /** Returns a command to move the arm to intake state. */
   public Command intake() {
-    return stateCommand(State.INTAKE_MOVE);
+    return stateCommand(State.INTAKE);
   }
 
   /** Returns a command to move the arm to stow state. */
