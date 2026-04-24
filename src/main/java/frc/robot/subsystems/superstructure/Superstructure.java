@@ -1,5 +1,6 @@
 package frc.robot.subsystems.superstructure;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -10,18 +11,21 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {
+  private final Supplier<Pose2d> robotPoseSupplier;
   private final TargetSupplier targetSupplier;
   private final ShooterSupplier shooterSupplier;
   private final ShotCalculator shotCalculator;
+  private final Debouncer debouncer = new Debouncer(0.1);
 
-  @AutoLogOutput(key = "Superstructure/AngleToTarget")
-  private Rotation2d angleToTarget = Rotation2d.fromDegrees(0.0);
+  @AutoLogOutput(key = "Superstructure/TargetAngle")
+  private Rotation2d targetAngle = Rotation2d.fromDegrees(0.0);
 
   @AutoLogOutput(key = "Superstructure/ShooterRPM")
   private double shooterRPM = 0.0;
 
   public Superstructure(
       Supplier<Pose2d> robotPoseSupplier, Supplier<ChassisSpeeds> robotSpeedsSupplier) {
+    this.robotPoseSupplier = robotPoseSupplier;
     this.targetSupplier = new TargetSupplier(robotPoseSupplier);
     this.shooterSupplier = new ShooterSupplier(robotPoseSupplier, robotSpeedsSupplier);
     this.shotCalculator = new ShotCalculator();
@@ -55,7 +59,7 @@ public class Superstructure extends SubsystemBase {
     Logger.recordOutput(
         "Superstructure/TargetLine", new Translation2d[] {target, sotMData.predictedTarget});
 
-    angleToTarget =
+    targetAngle =
         sotMData
             .predictedTarget
             .minus(shooter.getTranslation())
@@ -66,6 +70,17 @@ public class Superstructure extends SubsystemBase {
           case HUB -> sotMData.shotData.hubRPM;
           case RELAY -> sotMData.shotData.relayRPM;
         };
+  }
+
+  @AutoLogOutput(key = "Superstructure/AtPosition")
+  private boolean atPosition() {
+    Rotation2d angleToTarget = targetAngle.minus(robotPoseSupplier.get().getRotation());
+    return Math.abs(angleToTarget.getDegrees()) < 3.0;
+  }
+
+  @AutoLogOutput(key = "Superstructure/OnTarget")
+  public boolean onTarget() {
+    return debouncer.calculate(atPosition());
   }
 
   private static class SotMData {
@@ -102,7 +117,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Rotation2d angleToTarget() {
-    return angleToTarget;
+    return targetAngle;
   }
 
   public double shooterRPM() {

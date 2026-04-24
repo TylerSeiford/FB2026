@@ -104,7 +104,8 @@ public class Hopper extends SubsystemBase {
         if (runSupplier.getAsBoolean()) {
           runVelocity(manualShootInput.get());
         } else {
-          stopHopper();
+          setpoint = 0.0;
+          io.stop();
         }
         break;
       case EJECT:

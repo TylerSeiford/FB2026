@@ -142,7 +142,7 @@ public class Shooter extends SubsystemBase {
   }
 
   @AutoLogOutput(key = "Shooter/OnTarget")
-  private boolean onTarget() {
+  public boolean onTarget() {
     return onTargetDebouncer.calculate(atSpeed());
   }
 

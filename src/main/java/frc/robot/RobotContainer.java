@@ -88,7 +88,9 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIOSparkFlex(), superstructure::shooterRPM);
         intake = new Intake(new IntakeIOSparkFlex());
         arm = new Arm(new ArmIOSparkMax());
-        hopper = new Hopper(new HopperIOSparkMax(), () -> true);
+        hopper =
+            new Hopper(
+                new HopperIOSparkMax(), () -> shooter.onTarget() && superstructure.onTarget());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -111,7 +113,8 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIOSim(), superstructure::shooterRPM);
         intake = new Intake(new IntakeIOSim());
         arm = new Arm(new ArmIOSim());
-        hopper = new Hopper(new HopperIOSim(), () -> true);
+        hopper =
+            new Hopper(new HopperIOSim(), () -> shooter.onTarget() && superstructure.onTarget());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -134,7 +137,8 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIO() {}, superstructure::shooterRPM);
         intake = new Intake(new IntakeIO() {});
         arm = new Arm(new ArmIO() {});
-        hopper = new Hopper(new HopperIO() {}, () -> true);
+        hopper =
+            new Hopper(new HopperIO() {}, () -> shooter.onTarget() && superstructure.onTarget());
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
