@@ -23,57 +23,74 @@ import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.SparkUtil;
 
 public class IntakeIOSparkFlex implements IntakeIO {
-  private final SparkFlex motor = new SparkFlex(12, MotorType.kBrushless);
-  private final RelativeEncoder encoder = motor.getEncoder();
-  private final SparkClosedLoopController pid = motor.getClosedLoopController();
-  private final SparkMaxConfig config = new SparkMaxConfig();
+  private final SparkFlex primaryMotor = new SparkFlex(12, MotorType.kBrushless);
+  private final RelativeEncoder primaryEncoder = primaryMotor.getEncoder();
+  private final SparkClosedLoopController primaryPID = primaryMotor.getClosedLoopController();
+  private final SparkFlexConfig primaryConfig = new SparkFlexConfig();
+  private final SparkFlex secondaryMotor = new SparkFlex(11, MotorType.kBrushless);
+  private final RelativeEncoder secondaryEncoder = secondaryMotor.getEncoder();
+  private final SparkFlexConfig secondaryConfig = new SparkFlexConfig();
 
   public IntakeIOSparkFlex() {
-    config
+    primaryConfig
         .idleMode(IdleMode.kCoast)
         .inverted(true)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(60, 50)
-        .secondaryCurrentLimit(80.0);
+        .smartCurrentLimit(40, 20)
+        .secondaryCurrentLimit(50.0);
     SparkUtil.tryUntilOk(
-        motor,
+        primaryMotor,
         5,
         () ->
-            motor.configure(
-                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+            primaryMotor.configure(
+                primaryConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    secondaryConfig.apply(primaryConfig);
+    secondaryConfig.follow(12, true);
+    SparkUtil.tryUntilOk(
+        secondaryMotor,
+        5,
+        () ->
+            secondaryMotor.configure(
+                primaryConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     inputs.positionsRadians =
         new double[] {
-          Units.rotationsToRadians(encoder.getPosition()) / Intake.Constants.GEAR_RATIO,
+          Units.rotationsToRadians(primaryEncoder.getPosition()) / Intake.Constants.GEAR_RATIO,
+          Units.rotationsToRadians(secondaryEncoder.getPosition()) / Intake.Constants.GEAR_RATIO
         };
     inputs.velocitiesRadPerSec =
         new double[] {
           Units.rotationsPerMinuteToRadiansPerSecond(
-              encoder.getVelocity() / Intake.Constants.GEAR_RATIO),
+              primaryEncoder.getVelocity() / Intake.Constants.GEAR_RATIO),
+          Units.rotationsPerMinuteToRadiansPerSecond(
+              secondaryEncoder.getVelocity() / Intake.Constants.GEAR_RATIO)
         };
     inputs.appliedVolts =
         new double[] {
-          motor.getAppliedOutput() * motor.getBusVoltage(),
+          primaryMotor.getAppliedOutput() * primaryMotor.getBusVoltage(),
+          secondaryMotor.getAppliedOutput() * secondaryMotor.getBusVoltage()
         };
-    inputs.currentAmps = new double[] {motor.getOutputCurrent()};
+    inputs.currentAmps =
+        new double[] {primaryMotor.getOutputCurrent(), secondaryMotor.getOutputCurrent()};
   }
 
   @Override
   public void setVoltage(double volts) {
-    motor.setVoltage(volts);
+    primaryMotor.setVoltage(volts);
   }
 
   @Override
   public void setVelocity(double velocityRadPerSec, double ffVolts) {
-    pid.setSetpoint(
+    primaryPID.setSetpoint(
         Units.radiansPerSecondToRotationsPerMinute(velocityRadPerSec) * Intake.Constants.GEAR_RATIO,
         ControlType.kVelocity,
         ClosedLoopSlot.kSlot0,
@@ -83,17 +100,17 @@ public class IntakeIOSparkFlex implements IntakeIO {
 
   @Override
   public void stop() {
-    motor.stopMotor();
+    primaryMotor.stopMotor();
   }
 
   @Override
   public void configurePID(double kP, double kI, double kD) {
-    config.closedLoop.pid(kP, kI, kD);
+    primaryConfig.closedLoop.pid(kP, kI, kD);
     SparkUtil.tryUntilOk(
-        motor,
+        primaryMotor,
         5,
         () ->
-            motor.configure(
-                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+            primaryMotor.configure(
+                primaryConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 }

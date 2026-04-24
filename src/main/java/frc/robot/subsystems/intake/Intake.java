@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
   }
 
   private final LoggedNetworkNumber intakeInput =
-      new LoggedNetworkNumber("Intake/Intake Speed", 2000.0);
+      new LoggedNetworkNumber("Intake/Intake Speed", 1000.0);
   private final LoggedNetworkNumber ejectInput =
       new LoggedNetworkNumber("Intake/Eject Speed", -1000.0);
 

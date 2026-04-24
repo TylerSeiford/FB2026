@@ -23,8 +23,8 @@ public class IntakeIOSim implements IntakeIO {
   private final FlywheelSim sim =
       new FlywheelSim(
           LinearSystemId.createFlywheelSystem(
-              DCMotor.getNeoVortex(1), 0.004, Intake.Constants.GEAR_RATIO),
-          DCMotor.getNeoVortex(1));
+              DCMotor.getNeoVortex(2), 0.004, Intake.Constants.GEAR_RATIO),
+          DCMotor.getNeoVortex(2));
   private final PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
   private boolean closedLoop = false;
@@ -46,8 +46,8 @@ public class IntakeIOSim implements IntakeIO {
 
     inputs.positionsRadians = new double[] {positionRadians};
     inputs.velocitiesRadPerSec = new double[] {sim.getAngularVelocityRadPerSec()};
-    inputs.appliedVolts = new double[] {appliedVolts};
-    inputs.currentAmps = new double[] {sim.getCurrentDrawAmps()};
+    inputs.appliedVolts = new double[] {appliedVolts, appliedVolts};
+    inputs.currentAmps = new double[] {sim.getCurrentDrawAmps(), sim.getCurrentDrawAmps()};
   }
 
   @Override
