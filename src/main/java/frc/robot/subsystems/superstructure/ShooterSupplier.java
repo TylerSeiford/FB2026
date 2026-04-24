@@ -35,21 +35,26 @@ public class ShooterSupplier {
     shooterPose = robotPose.transformBy(shooterOffset);
 
     ChassisSpeeds robotSpeeds = robotSpeedsSupplier.get();
-    Logger.recordOutput("Superstructure/ShooterSupplier/RobotSpeeds", robotSpeeds);
     Translation2d robotVelocity =
         new Translation2d(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond)
-            .rotateBy(robotPose.getRotation().minus(Rotation2d.k180deg));
+            .rotateBy(robotPose.getRotation());
     Logger.recordOutput("Superstructure/ShooterSupplier/RobotVelocity", robotVelocity);
-
-    Translation2d shooterRotationalVelocity = 
-        shooterOffset
-            .getTranslation()
-            .rotateBy(Rotation2d.fromRadians(robotSpeeds.omegaRadiansPerSecond));
     Logger.recordOutput(
-        "Superstructure/ShooterSupplier/ShooterRotationalVelocity", shooterRotationalVelocity);
-    Translation2d shooterTranslationalVelocity = robotVelocity.rotateBy(shooterPose.getRotation());
-    Logger.recordOutput("Superstructure/ShooterSupplier/ShooterTranslationalVelocity", shooterTranslationalVelocity);
-    shooterVelocity = shooterTranslationalVelocity.plus(shooterRotationalVelocity);
+        "Superstructure/ShooterSupplier/RobotVelocityLine",
+        new Translation2d[] {
+          robotPose.getTranslation(), robotPose.getTranslation().plus(robotVelocity)
+        });
+
+    Translation2d shooterRotationalVelocity =
+        new Translation2d(
+            robotSpeeds.omegaRadiansPerSecond * shooterOffset.getTranslation().getNorm(),
+            shooterPose.getRotation());
+    shooterVelocity = robotVelocity.plus(shooterRotationalVelocity);
+    Logger.recordOutput(
+        "Superstructure/ShooterSupplier/ShooterVelocityLine",
+        new Translation2d[] {
+          shooterPose.getTranslation(), shooterPose.getTranslation().plus(shooterVelocity)
+        });
   }
 
   public Pose2d shooterPose() {

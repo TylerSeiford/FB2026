@@ -42,8 +42,18 @@ public class Superstructure extends SubsystemBase {
     Logger.recordOutput("Superstructure/RelayRPM", sotMData.shotData.relayRPM);
     Logger.recordOutput("Superstructure/TimeOfFlight", sotMData.shotData.timeOfFlight);
     Logger.recordOutput(
+        "Superstructure/ShooterLine",
+        new Translation2d[] {
+          shooter.getTranslation(),
+          shooter.getTranslation().plus(shooterVelocity.times(sotMData.shotData.timeOfFlight))
+        });
+    Logger.recordOutput(
         "Superstructure/ShotLine",
-        new Translation2d[] {shooter.getTranslation(), sotMData.predictedTarget});
+        new Translation2d[] {
+          shooter.getTranslation(), sotMData.predictedTarget,
+        });
+    Logger.recordOutput(
+        "Superstructure/TargetLine", new Translation2d[] {target, sotMData.predictedTarget});
 
     angleToTarget =
         sotMData
@@ -69,16 +79,16 @@ public class Superstructure extends SubsystemBase {
   }
 
   private SotMData iterateSotM(Translation2d target, Translation2d pose, Translation2d velocity) {
-    final double tofConvergenceToleranceSeconds = 0.02;
+    final double tofConvergenceToleranceSeconds = 0.01;
 
     int i = 0;
     SotMData sotMData =
-        new SotMData(target, shotCalculator.calculateShot(target.getDistance(pose)));
+        new SotMData(target, shotCalculator.calculateShot(pose.getDistance(target)));
 
     while (i < 20) {
       final double lastTof = sotMData.shotData.timeOfFlight;
 
-      Translation2d predictedTarget = target.plus(velocity.times(sotMData.shotData.timeOfFlight));
+      Translation2d predictedTarget = target.minus(velocity.times(sotMData.shotData.timeOfFlight));
       sotMData =
           new SotMData(
               predictedTarget, shotCalculator.calculateShot(predictedTarget.getDistance(pose)));
