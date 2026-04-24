@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.spindexer;
+package frc.robot.subsystems.hopper;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -27,18 +27,18 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.SparkUtil;
 
-public class SpindexerIOSparkMax implements SpindexerIO {
+public class HopperIOSparkMax implements HopperIO {
   private final SparkMax motor = new SparkMax(13, MotorType.kBrushless);
   private final RelativeEncoder encoder = motor.getEncoder();
   private final SparkClosedLoopController pid = motor.getClosedLoopController();
   private final SparkMaxConfig config = new SparkMaxConfig();
 
-  public SpindexerIOSparkMax() {
+  public HopperIOSparkMax() {
     config
         .idleMode(IdleMode.kCoast)
         .inverted(false)
         .voltageCompensation(12.0)
-        .smartCurrentLimit(40, 30)
+        .smartCurrentLimit(40, 20)
         .secondaryCurrentLimit(50.0);
     SparkUtil.tryUntilOk(
         motor,
@@ -49,15 +49,15 @@ public class SpindexerIOSparkMax implements SpindexerIO {
   }
 
   @Override
-  public void updateInputs(SpindexerIOInputs inputs) {
+  public void updateInputs(HopperIOInputs inputs) {
     inputs.positionsRadians =
         new double[] {
-          Units.rotationsToRadians(encoder.getPosition()) / Spindexer.Constants.GEAR_RATIO,
+          Units.rotationsToRadians(encoder.getPosition()) / Hopper.Constants.GEAR_RATIO,
         };
     inputs.velocitiesRadPerSec =
         new double[] {
           Units.rotationsPerMinuteToRadiansPerSecond(
-              encoder.getVelocity() / Spindexer.Constants.GEAR_RATIO),
+              encoder.getVelocity() / Hopper.Constants.GEAR_RATIO),
         };
     inputs.appliedVolts =
         new double[] {
@@ -74,8 +74,7 @@ public class SpindexerIOSparkMax implements SpindexerIO {
   @Override
   public void setVelocity(double velocityRadPerSec, double ffVolts) {
     pid.setSetpoint(
-        Units.radiansPerSecondToRotationsPerMinute(velocityRadPerSec)
-            * Spindexer.Constants.GEAR_RATIO,
+        Units.radiansPerSecondToRotationsPerMinute(velocityRadPerSec) * Hopper.Constants.GEAR_RATIO,
         ControlType.kVelocity,
         ClosedLoopSlot.kSlot0,
         ffVolts,

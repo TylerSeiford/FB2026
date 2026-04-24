@@ -28,6 +28,10 @@ import frc.robot.subsystems.drive.GyroIOCanandGyro;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.HopperIO;
+import frc.robot.subsystems.hopper.HopperIOSim;
+import frc.robot.subsystems.hopper.HopperIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
@@ -36,10 +40,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.shooter.ShooterIOSparkFlex;
-import frc.robot.subsystems.spindexer.Spindexer;
-import frc.robot.subsystems.spindexer.SpindexerIO;
-import frc.robot.subsystems.spindexer.SpindexerIOSim;
-import frc.robot.subsystems.spindexer.SpindexerIOSparkMax;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
@@ -61,7 +61,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Intake intake;
   private final Arm arm;
-  private final Spindexer spindexer;
+  private final Hopper hopper;
 
   @SuppressWarnings("unused")
   private final Vision vision;
@@ -88,7 +88,7 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIOSparkFlex(), superstructure::shooterRPM);
         intake = new Intake(new IntakeIOSparkFlex());
         arm = new Arm(new ArmIOSparkMax());
-        spindexer = new Spindexer(new SpindexerIOSparkMax());
+        hopper = new Hopper(new HopperIOSparkMax(), () -> true);
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -111,7 +111,7 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIOSim(), superstructure::shooterRPM);
         intake = new Intake(new IntakeIOSim());
         arm = new Arm(new ArmIOSim());
-        spindexer = new Spindexer(new SpindexerIOSim());
+        hopper = new Hopper(new HopperIOSim(), () -> true);
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -134,7 +134,7 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIO() {}, superstructure::shooterRPM);
         intake = new Intake(new IntakeIO() {});
         arm = new Arm(new ArmIO() {});
-        spindexer = new Spindexer(new SpindexerIO() {});
+        hopper = new Hopper(new HopperIO() {}, () -> true);
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
@@ -150,9 +150,8 @@ public class RobotContainer {
                 shooter.auto(),
                 DriveCommands.autoDriveAtTarget(
                     drive, superstructure::angleToTarget, Rotation2d.fromDegrees(1.0))),
-            spindexer.shoot()));
-    NamedCommands.registerCommand(
-        "Stop Shoot", Commands.sequence(spindexer.stop(), shooter.stop()));
+            hopper.auto()));
+    NamedCommands.registerCommand("Stop Shoot", Commands.sequence(hopper.stop(), shooter.stop()));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -259,40 +258,40 @@ public class RobotContainer {
                     shooter.auto(),
                     DriveCommands.autoDriveAtTarget(
                         drive, superstructure::angleToTarget, Rotation2d.fromDegrees(1.0))),
-                spindexer.shoot(),
+                hopper.auto(),
                 DriveCommands.joystickDriveAtAngle(
                     drive,
                     () -> -controller.getLeftY(),
                     () -> -controller.getLeftX(),
                     superstructure::angleToTarget)))
-        .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
+        .onFalse(Commands.sequence(hopper.stop(), shooter.stop()));
 
     // Manual shoot while left bumper is held
     controller
         .leftBumper()
-        .onTrue(Commands.sequence(shooter.manualHub(), spindexer.shoot()))
-        .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
+        .onTrue(Commands.sequence(shooter.manualHub(), hopper.manual()))
+        .onFalse(Commands.sequence(hopper.stop(), shooter.stop()));
 
     // Manual relay while right bumper is held
     controller
         .rightBumper()
-        .onTrue(Commands.sequence(shooter.manualRelay(), spindexer.shoot()))
-        .onFalse(Commands.sequence(spindexer.stop(), shooter.stop()));
+        .onTrue(Commands.sequence(shooter.manualRelay(), hopper.manual()))
+        .onFalse(Commands.sequence(hopper.stop(), shooter.stop()));
 
     // Intake while right trigger is held
     controller
         .rightTrigger()
-        .onTrue(Commands.sequence(spindexer.stop(), shooter.stop(), arm.intake(), intake.intake()))
+        .onTrue(Commands.sequence(hopper.stop(), shooter.stop(), arm.intake(), intake.intake()))
         .onFalse(intake.stop());
 
     // Pause spindexer while A is held
-    controller.a().onTrue(spindexer.stop()).onFalse(spindexer.shoot());
+    controller.a().onTrue(hopper.stop()).onFalse(hopper.auto());
 
     // Eject all the things while y is held, otherwise stop
     controller
         .y()
-        .onTrue(Commands.parallel(shooter.eject(), intake.eject(), spindexer.eject()))
-        .onFalse(Commands.parallel(shooter.stop(), intake.stop(), spindexer.stop()));
+        .onTrue(Commands.parallel(shooter.eject(), intake.eject(), hopper.eject()))
+        .onFalse(Commands.parallel(shooter.stop(), intake.stop(), hopper.stop()));
   }
 
   /**

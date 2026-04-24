@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.spindexer;
+package frc.robot.subsystems.hopper;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -19,11 +19,11 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
-public class SpindexerIOSim implements SpindexerIO {
+public class HopperIOSim implements HopperIO {
   private final FlywheelSim sim =
       new FlywheelSim(
           LinearSystemId.createFlywheelSystem(
-              DCMotor.getNEO(1), 0.18, Spindexer.Constants.GEAR_RATIO),
+              DCMotor.getNEO(1), 0.004, Hopper.Constants.GEAR_RATIO),
           DCMotor.getNEO(1));
   private final PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
@@ -33,7 +33,7 @@ public class SpindexerIOSim implements SpindexerIO {
   private double positionRadians = 0.0;
 
   @Override
-  public void updateInputs(SpindexerIOInputs inputs) {
+  public void updateInputs(HopperIOInputs inputs) {
     if (closedLoop) {
       appliedVolts =
           MathUtil.clamp(pid.calculate(sim.getAngularVelocityRadPerSec()) + ffVolts, -12.0, 12.0);

@@ -69,7 +69,8 @@
             "/Log0/NetworkInputs/SmartDashboard",
             "/RealOutputs/Alerts",
             "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/RealOutputs/ShotConductor"
+            "/AdvantageKit/RealOutputs/ShotConductor",
+            "/AdvantageKit/RealOutputs/Superstructure/ShooterSupplier/ShooterPose/rotation"
           ]
         },
         "tabs": {
@@ -166,11 +167,31 @@
                   },
                   {
                     "type": "arrow",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/ShooterSupplier/Shooter",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/ShooterSupplier/ShooterPose",
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
                       "position": "back"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/ShooterSupplier/RobotVelocityLine",
+                    "logType": "Translation2d[]",
+                    "visible": false,
+                    "options": {
+                      "color": "#ff8c00",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/ShooterSupplier/ShooterVelocityLine",
+                    "logType": "Translation2d[]",
+                    "visible": false,
+                    "options": {
+                      "color": "#00ffff",
+                      "size": "normal"
                     }
                   },
                   {
@@ -182,10 +203,30 @@
                       "color": "#ffff00",
                       "size": "normal"
                     }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/TargetLine",
+                    "logType": "Translation2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/ShooterLine",
+                    "logType": "Translation2d[]",
+                    "visible": false,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
                   }
                 ],
                 "field": "FRC:2026 Field",
-                "orientation": 0,
+                "orientation": 2,
                 "size": "medium"
               },
               "controllerUUID": "ntufoqet6lkaiayrlahdc867833keucs",
@@ -460,12 +501,12 @@
             },
             {
               "type": 1,
-              "title": "Spindexer",
+              "title": "Hopper",
               "controller": {
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Spindexer/Setpoint",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Hopper/Setpoint",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -475,7 +516,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Spindexer/Speed",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Hopper/Speed",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -487,7 +528,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Spindexer/CurrentAmps/0",
+                    "logKey": "NT:/AdvantageKit/Hopper/CurrentAmps/0",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -499,7 +540,7 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Spindexer/State",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Hopper/State",
                     "logType": "String",
                     "visible": true,
                     "options": {
@@ -508,7 +549,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Spindexer/AtSpeed",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Hopper/AtSpeed",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -517,7 +558,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Spindexer/OnTarget",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Hopper/OnTarget",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {

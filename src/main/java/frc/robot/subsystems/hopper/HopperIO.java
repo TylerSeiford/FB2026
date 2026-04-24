@@ -11,13 +11,13 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.spindexer;
+package frc.robot.subsystems.hopper;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface SpindexerIO {
+public interface HopperIO {
   @AutoLog
-  public static class SpindexerIOInputs {
+  public static class HopperIOInputs {
     public double[] positionsRadians = new double[0];
     public double[] velocitiesRadPerSec = new double[0];
     public double[] appliedVolts = new double[0];
@@ -25,7 +25,7 @@ public interface SpindexerIO {
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(SpindexerIOInputs inputs) {}
+  public default void updateInputs(HopperIOInputs inputs) {}
 
   /** Run open loop at the specified voltage. */
   public default void setVoltage(double volts) {}

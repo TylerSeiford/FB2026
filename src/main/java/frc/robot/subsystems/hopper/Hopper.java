@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.spindexer;
+package frc.robot.subsystems.hopper;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -22,42 +22,46 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
-public class Spindexer extends SubsystemBase {
+public class Hopper extends SubsystemBase {
   public static final class Constants {
-    public static final double GEAR_RATIO = 45.0;
+    public static final double GEAR_RATIO = 3.0;
   }
 
   private static enum State {
     STOPPED,
-    SHOOT,
+    MANUAL_SHOOT,
+    AUTO_SHOOT,
     EJECT,
     SYSID
   }
 
-  private final LoggedNetworkNumber shootInput =
-      new LoggedNetworkNumber("Spindexer/Shoot Speed", 120.0);
+  private final LoggedNetworkNumber manualShootInput =
+      new LoggedNetworkNumber("Hopper/Shoot Speed", 1400.0);
   private final LoggedNetworkNumber ejectInput =
-      new LoggedNetworkNumber("Spindexer/Eject Speed", -60.0);
+      new LoggedNetworkNumber("Hopper/Eject Speed", -700.0);
 
-  private final SpindexerIO io;
-  private final SpindexerIOInputsAutoLogged inputs = new SpindexerIOInputsAutoLogged();
+  private final HopperIO io;
+  private final HopperIOInputsAutoLogged inputs = new HopperIOInputsAutoLogged();
   private final SimpleMotorFeedforward ffModel;
   private final Debouncer debouncer = new Debouncer(0.2);
+  private final BooleanSupplier runSupplier;
   private final SysIdRoutine sysId;
 
-  @AutoLogOutput(key = "Spindexer/State")
+  @AutoLogOutput(key = "Hopper/State")
   private State state = State.STOPPED;
 
-  @AutoLogOutput(key = "Spindexer/Setpoint")
+  @AutoLogOutput(key = "Hopper/Setpoint")
   private double setpoint = 0.0;
 
   /** Creates a new Intake. */
-  public Spindexer(SpindexerIO io) {
+  public Hopper(HopperIO io, BooleanSupplier runSupplier) {
     this.io = io;
+    this.runSupplier = runSupplier;
 
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)
@@ -68,8 +72,8 @@ public class Spindexer extends SubsystemBase {
         io.configurePID(0.000175 * Constants.GEAR_RATIO, 0.0, 0.0); // TODO TS: SysId
         break;
       case SIM:
-        ffModel = new SimpleMotorFeedforward(0.0, 0.9);
-        io.configurePID(1.0, 0.0, 0.0);
+        ffModel = new SimpleMotorFeedforward(0.0, 0.06);
+        io.configurePID(0.1, 0.0, 0.0);
         break;
       default:
         ffModel = new SimpleMotorFeedforward(0.0, 0.0);
@@ -83,31 +87,38 @@ public class Spindexer extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("Spindexer/SysIdState", state.toString())),
+                (state) -> Logger.recordOutput("Hopper/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runVolts(voltage.in(Volts)), null, this));
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Spindexer", inputs);
+    Logger.processInputs("Hopper", inputs);
 
     switch (state) {
-      case SHOOT:
-        runVelocity(shootInput.get());
+      case MANUAL_SHOOT:
+        runVelocity(manualShootInput.get());
+        break;
+      case AUTO_SHOOT:
+        if (runSupplier.getAsBoolean()) {
+          runVelocity(manualShootInput.get());
+        } else {
+          stopHopper();
+        }
         break;
       case EJECT:
         runVelocity(ejectInput.get());
         break;
       case STOPPED:
-        stopIntake();
+        stopHopper();
         break;
       case SYSID:
         break;
     }
   }
 
-  @AutoLogOutput(key = "Spindexer/Speed")
+  @AutoLogOutput(key = "Hopper/Speed")
   private double getSpeed() {
     double result = 0;
     for (double value : inputs.velocitiesRadPerSec) {
@@ -117,17 +128,17 @@ public class Spindexer extends SubsystemBase {
     return Units.radiansPerSecondToRotationsPerMinute(result);
   }
 
-  @AutoLogOutput(key = "Spindexer/Error")
+  @AutoLogOutput(key = "Hopper/Error")
   private double getError() {
     return getSpeed() - setpoint;
   }
 
-  @AutoLogOutput(key = "Spindexer/AtSpeed")
+  @AutoLogOutput(key = "Hopper/AtSpeed")
   private boolean atSpeed() {
-    return Math.abs(getError()) < 2.0;
+    return Math.abs(getError()) < 100.0 / Constants.GEAR_RATIO;
   }
 
-  @AutoLogOutput(key = "Spindexer/OnTarget")
+  @AutoLogOutput(key = "Hopper/OnTarget")
   private boolean onTarget() {
     return debouncer.calculate(atSpeed());
   }
@@ -145,14 +156,14 @@ public class Spindexer extends SubsystemBase {
     setpoint = velocityRPM;
   }
 
-  /** Stops the intake. */
-  private void stopIntake() {
+  /** Stops the hopper. */
+  private void stopHopper() {
     state = State.STOPPED;
     setpoint = 0.0;
     io.stop();
   }
 
-  /** Returns a command to run the spindexer at a set state. */
+  /** Returns a command to run the hopper at a set state. */
   private Command stateCommand(State state) {
     return Commands.sequence(
         runOnce(() -> this.state = state),
@@ -160,19 +171,24 @@ public class Spindexer extends SubsystemBase {
         run(() -> {}).until(this::onTarget));
   }
 
-  /** Returns a command to run the spindexer at shoot state. */
-  public Command shoot() {
-    return stateCommand(State.SHOOT);
+  /** Returns a command to run the hopper at shoot manual state. */
+  public Command manual() {
+    return stateCommand(State.MANUAL_SHOOT);
   }
 
-  /** Returns a command to run the spindexer at eject state. */
+  /** Returns a command to run the hopper at shoot auto state. */
+  public Command auto() {
+    return stateCommand(State.AUTO_SHOOT);
+  }
+
+  /** Returns a command to run the hopper at eject state. */
   public Command eject() {
     return stateCommand(State.EJECT);
   }
 
-  /** Returns a command to stop the intake. */
+  /** Returns a command to stop the hopper. */
   public Command stop() {
-    return runOnce(this::stopIntake);
+    return runOnce(this::stopHopper);
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
